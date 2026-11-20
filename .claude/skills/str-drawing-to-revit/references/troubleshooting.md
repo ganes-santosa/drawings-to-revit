@@ -23,9 +23,16 @@
 | Elements cross a joint | Grid-to-grid modelling | Find joints first | beams | [IMPORTED KPwBI] |
 | Orphan foundations | Demolished frame included | Ask; check sheet status | foundations | [IMPORTED KPwBI] |
 | Project-doc write refused | Doc not read in full this session | Read in full, edit, write | — (KPwBI doc tool) | [IMPORTED KPwBI] |
+| Thin outer lines (eave-tip purlins) missing | Modelled main members only; user circled the outline | Thin outer lines are members too; ask what a circle means | structural-framing | [IMPORTED KPwBI] |
+| Secondary beams on the wrong lines | Assumed nearest grid (1A/2A) | Use drawn offsets (1A − 1200, 2A + 600) | beams | [IMPORTED KPwBI] |
+| Slab stubs stick out past the edge | Edges set from grids or beam faces | Redraw from the drawn thick outline | slabs | [IMPORTED KPwBI] |
+| "Bracing" in a void cell | X pattern read as bracing | Line width 2.0 + legend = void marking | drawing-interpretation §5 | [IMPORTED KPwBI] |
+| Inset positions wrong | Title said 1:100, drawn 1:200 | Calibrate on the inset's own ticks | grids-and-levels | [IMPORTED KPwBI] |
+| Knee-brace top snapped to beam centreline | Brace structural type | Place as Beam type with sloped ends | beams | [IMPORTED KPwBI] |
+| Slab thickness differs plan vs detail | Took the plan table value | Ask; adopt the answer and lower steel under metal deck | slabs | [IMPORTED KPwBI] |
 | Skill route not found | Row missing/typo | `python scripts/check_skill.py` | SKILL.md §2 | [IMPORTED container] |
 
-## Documentation/view gotchas `[IMPORTED KPwBI]`
+## Documentation/view gotchas `[IMPORTED KPwBI]` (full detail: `views-and-documentation.md`)
 - Structural Plan view type injected 6 filters incl. hidden "Floors - Concrete NOT": remove from working views.
 - Inspection views: plan per level (Coordination discipline, range slab top −1.7 m to +1.2 m), 3D per level with section box, overall 3D; structural categories only, floors 45–55% transparent; filters: LOW CONFIDENCE red, steel blue, concrete grey, slabs by thickness.
 - Sheets, dimensions, tags, schedules: **not yet done** `[OPEN]` — follow project template and ask.

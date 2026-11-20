@@ -13,11 +13,11 @@ Roof framing plan with profile-letter tables (A…E), truss elevations/sections,
 Support heights, ridge/eave heights, panel points, chord centreline levels, diagonal pattern (Pratt etc.), profile per member letter, purlin sections and orientation.
 
 ## 4. Interpretation method
-Keep the truss geometry record in the project log: support y, ridge, heel z, chord centreline z, panel points, diagonal direction, sizes per member type `[IMPORTED KPwBI]`. Read the profile letter on every member including extensions `[IMPORTED KPwBI]`.
+Keep the truss geometry record in the project log: support y, ridge, heel z, chord centreline z, panel points, diagonal direction, sizes per member type `[IMPORTED KPwBI]`. Read the profile letter on every member including extensions `[IMPORTED KPwBI]`. Example of such a table (KPwBI roof, project-specific): A WF250x175, B WF300x150x6.5x9, C WF250x125, D WF200x100, E 2L70x70x6. Hip and valley extensions were labelled A but first modelled as D overhangs. Front-roof-block heights were not on the structural sheets: apex and eave tip came from the architectural elevation, slope from the architectural section (`LOW CONFIDENCE`, discipline noted).
 
 ## 5. Revit procedure
 1. Use steel families where they exist (wide-flange beam, UC-based column) `[IMPORTED KPwBI]`.
-2. Missing size: `FamilySymbol.Duplicate(name)` then set h, b, t, s, r in a **separate** call `[IMPORTED KPwBI]`.
+2. Missing size: `FamilySymbol.Duplicate(name)` then set h, b, t, s, r in a **separate** call `[IMPORTED KPwBI]`. Examples made from the UC family: `KOLOM BAJA WF300x150x6.5x9`, `KOLOM BAJA HB300x300x10x15`.
 3. **No angle or CNP family existed**: double angles and purlins as DirectShape in Structural Framing, via `GeometryCreationUtilities.CreateExtrusionGeometry` with I, 2L (12 mm gusset gap) or 12-point CNP profile `[IMPORTED KPwBI]`. CNP150x65x20x3.2: web on rafter top, flanges up, lips in, web centre 46 mm outboard at eave tips.
 4. Sloped members: Beam structural type, not Brace `[IMPORTED KPwBI]`.
 5. If substituting nearest family size: LOW CONFIDENCE.

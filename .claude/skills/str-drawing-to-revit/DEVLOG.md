@@ -2,6 +2,17 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-20 — v0.3 legacy knowledge fully integrated
+- Archived the original single-file skill verbatim: `assets/legacy/structural-drawings-to-revit-v1-KPwBI.md` + mapping README.
+- Compared every legacy item with the modular skill. Added what had been lost or generalised away:
+  - SKILL.md: "User working preferences" block; dependency-driven build order (height chain: slab → beam → column base → cap); "drawn-but-missing is worse than a flagged estimate".
+  - New route `views` + `references/views-and-documentation.md` (inspection views, filters, naming, template-filter gotcha).
+  - Real KPwBI names restored (BALOK BETON PERSEGI, KOLOM BAJA …, PELAT …, PONDASI …), mark patterns, eccentric-beam examples, profile-letter table example, metal-deck build-up.
+  - Typical Indonesian DED sheet order and title words; pile glyph detail; inference examples.
+  - Project log template: height chain, non-obvious coordinates, truss geometry record.
+  - 7 missing troubleshooting rows.
+- Open: the installed plugin `structural-drawings-to-revit` still exists and overlaps this skill; disable it once this skill is trusted.
+
 ## 2026-11-20 — v0.2 local sync and tag cleanup
 - Project now developed locally (D:/Outpost/Coding/str-to-revit); GitHub is a backup, push/pull only on request.
 - Environment record corrected: local Windows machine, Revit 2026 installed, MCP tools present, Revit not running -> connection failed.

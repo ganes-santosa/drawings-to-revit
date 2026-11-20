@@ -16,7 +16,7 @@ Steel: **use families wherever they exist** (user rule `[IMPORTED KPwBI]`); Dire
 - Inventory first: `new FilteredElementCollector(document).OfClass(typeof(FamilySymbol)).OfCategory(BuiltInCategory.OST_StructuralFraming)` `[THEORY]`; list family+type names and parameters.
 - Duplicate: `symbol.Duplicate("NEW NAME")` → cast to `FamilySymbol`; set parameters (b, h, t, s, r…) **in a separate call** `[IMPORTED KPwBI]` (doing create+set+swap in one script threw).
 - Activate before placing: `if(!symbol.IsActive) symbol.Activate();` `[THEORY]`.
-- Naming: `BEAM CONCRETE bxhmm`, steel by profile `WF350x175x7x11`.
+- Naming `[IMPORTED KPwBI]`: concrete beams `BALOK BETON bxhmm` (family `BALOK BETON PERSEGI`); steel beams by profile `WF350x175x7x11`; steel columns duplicated from the UC family as `KOLOM BAJA WF300x150x6.5x9`, `KOLOM BAJA HB300x300x10x15`; floors `PELAT BETON 120mm (S1/S2/S3/SN1A)`, `PELAT METAL DECK 150mm (SN1A/SN1B)`; foundation groups `PONDASI <type> <grid> - PILE CAP` / `- TIANG BOR`. Follow the project template if it differs; never invent a new naming scheme without asking.
 - Concrete family flexes only one face with `b` → Y justification Center on instances (`beams.md`) `[IMPORTED KPwBI]`.
 - Editing a family document (`EditFamily`) from the MCP execution context: `[LIMIT]` a transaction is always open, so family-document editing via the API was not possible in KPwBI; use type parameters/instance parameters.
 

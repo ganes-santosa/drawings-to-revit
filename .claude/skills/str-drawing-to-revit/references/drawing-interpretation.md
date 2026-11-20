@@ -23,6 +23,9 @@ How to read, cross-reference and extract data from structural drawings *before* 
 
 Rule: **a single drawing is never the complete source.** Position from plan, size from schedule/detail, height from section — and check them against each other.
 
+### Typical sheet order of an Indonesian structural DED set `[IMPORTED KPwBI]`
+Foundation (existing) → plans per floor (existing, then retrofit) → column plan + schedule → jacketing types and details → beam reinforcement details → beam strengthening → slab details (metal-deck sections) → roof truss plan + sections → connection details → canopy sheets → other structures (bridge, flagpole, green wall, remise canopy). Use it to find missing sheets quickly; do not assume every set follows it. Sheet-title words `[THEORY]` (general Indonesian usage; only `Eksisting`/`Bongkaran` came from KPwBI): `Denah` = plan, `Potongan` = section, `Detail`, `Eksisting` = existing, `Bongkaran` = demolition, `Rencana` = proposed.
+
 ## 3. Phase-1 inventory procedure
 1. List every sheet: number, title, revision/date, scale, page in file. `[THEORY]` Use `pdftotext -layout` for title blocks; `pdfinfo` for page count and size.
 2. Classify each: existing / demolition / new; plan / section / detail / schedule; building zone covered.
@@ -51,7 +54,7 @@ Rule: **a single drawing is never the complete source.** Position from plan, siz
 - **Heights absent from structural sheets** may be in architectural elevations/sections — state which discipline supplied them.
 - **Datums differ between sheet groups** (a canopy group used L1 = −0.050; project = value + 2.300). Verify one known level per sheet group.
 - **Plan vs dimensioned detail disagree** → the dimensioned sheet was used, conflict logged LOW CONFIDENCE (user-approved in that project; ask in yours).
-- **Glyph-shape identification** (pile types A/B/C by letter shape) was cross-checked against the sheet table — counts matched exactly. Always cross-check identification against a count table when one exists.
+- **Glyph-shape identification** (pile types A/B/C by letter shape: A has straight strokes, B/C have curves) was cross-checked against the sheet table — counts matched exactly. Always cross-check identification against a count table when one exists.
 - **Slab thickness conflict** (table 120 vs detail 150 metal deck): asked the user; steel under metal-deck slabs sat at SFL − 150.
 - **When the user points** (circles a screenshot / "these ones I selected"): `get_selected_elements` if available, then re-read that exact area at high dpi. First guesses were wrong twice.
 
@@ -63,6 +66,12 @@ Rule: **a single drawing is never the complete source.** Position from plan, siz
 5. Visual / proportional → `ASSUMED`, `LOW CONFIDENCE`
 
 Drawn-but-undimensioned elements are modelled with best evidence and flagged (SKILL.md §3.4). Not-drawn elements are not modelled.
+
+KPwBI examples, all tagged `LOW CONFIDENCE` `[IMPORTED KPwBI]`:
+- Mezzanine knee-brace section not labelled → WF200x100 assumed.
+- F–G void member depth unreadable → 170x400 assumed.
+- Front roof block heights absent from structural sheets → taken from the architectural elevation and section.
+- Pile-cap tops not given → set to the soffit of the deepest beam (columns.md §4).
 
 ## 7. Common failure cases
 | Symptom | Cause | Fix |

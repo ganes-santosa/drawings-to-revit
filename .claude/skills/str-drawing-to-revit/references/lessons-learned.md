@@ -19,3 +19,4 @@
 - #env [VERIFIED local 2026-11-20] Revit 2026 installed locally; MCP calls fail with `connect to revit client failed` until Revit + add-in are running → revit-api-and-automation.md
 - #env [OPEN] Revit-side `[THEORY]`/`[IMPORTED]` items await live tests → assets/examples/live-test-plan.md
 - #tags Imported KPwBI knowledge retagged `[IMPORTED KPwBI]` (was `[VERIFIED KPwBI]`); promote only after a local test → SKILL.md §8
+- #skill [VERIFIED 2026-11-20] Legacy skill archived verbatim (assets/legacy/) and compared item by item; missing items integrated: user preferences (SKILL.md §4), height chain / build order (full workflow Phase 3), real KPwBI family/type/mark names (beams, revit-families, framing, slabs), views & filters (new views-and-documentation.md), DED sheet order + inference examples (drawing-interpretation), 7 troubleshooting rows → assets/legacy/README.md

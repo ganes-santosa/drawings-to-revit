@@ -17,7 +17,7 @@ Outline polygon; tag → thickness (schedule **and** detail sheet); level and to
 - Split at expansion joints.
 
 ## 5. Revit procedure
-1. Floor types per thickness/composition, named by thickness + tags, e.g. `PELAT BETON 120mm (S1/S2)`, `PELAT METAL DECK 150mm` `[IMPORTED KPwBI]`. Mark structural (`FLOOR_PARAM_IS_STRUCTURAL`) `[THEORY]`.
+1. Floor types per thickness/composition, named by thickness + tags, e.g. `PELAT BETON 120mm (S1/S2)`, `PELAT METAL DECK 150mm (SN1A/SN1B)` `[IMPORTED KPwBI]`, each with a type mark. Metal deck in KPwBI: 0.75 mm deck, 50 mm ribs + 100 mm topping = 150. Mark structural (`FLOOR_PARAM_IS_STRUCTURAL`) `[THEORY]`.
 2. Create via `Floor.Create(document, List<CurveLoop>, floorTypeId, levelId)` (Revit 2022+) `[THEORY]`; older: `NewFloor`. Offset from level so top = SFL (`FLOOR_HEIGHTABOVELEVEL_PARAM`).
 3. Openings as inner loops in the same CurveLoop list, or `NewOpening` `[THEORY]`.
 4. **Overlapping floors:** rebuilding a floor that overlaps a neighbour raises a modal "Highlighted floors overlap" warning that blocks the API and looks like a timeout. Rebuild in an order that never overlaps, few per call `[IMPORTED KPwBI]`.

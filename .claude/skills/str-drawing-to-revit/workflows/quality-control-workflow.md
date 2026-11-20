@@ -1,6 +1,6 @@
 # Quality control workflow (route: `review`; also Phase 4)
 
-Run per level/group and as a full audit. Catalogue and tolerances: `references/model-validation.md`.
+Run per level/group and as a full audit. "Check the entire model for anything suspicious" or "final gloss over" from the user = the full audit (all checks, all levels). Catalogue and tolerances: `references/model-validation.md`.
 
 1. **Scope**: which levels/categories. Read the project log (conversion, conflicts, LOW CONFIDENCE list).
 2. **Extract model data** programmatically: id, category, family/type, mark, comments, level, location (mm), size, bbox. Save as a table.
