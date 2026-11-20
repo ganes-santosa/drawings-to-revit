@@ -23,6 +23,7 @@
 | Elements cross a joint | Grid-to-grid modelling | Find joints first | beams | [IMPORTED KPwBI] |
 | Orphan foundations | Demolished frame included | Ask; check sheet status | foundations | [IMPORTED KPwBI] |
 | Project-doc write refused | Doc not read in full this session | Read in full, edit, write | — (KPwBI doc tool) | [IMPORTED KPwBI] |
+| Beams don't touch columns or each other ("floating") | End points taken from where the drawn line stops; wrong level; support not modelled yet | Support table, ends resolved to supports, connectivity check | building-logic | [THEORY] (user-reported) |
 | Thin outer lines (eave-tip purlins) missing | Modelled main members only; user circled the outline | Thin outer lines are members too; ask what a circle means | structural-framing | [IMPORTED KPwBI] |
 | Secondary beams on the wrong lines | Assumed nearest grid (1A/2A) | Use drawn offsets (1A − 1200, 2A + 600) | beams | [IMPORTED KPwBI] |
 | Slab stubs stick out past the edge | Edges set from grids or beam faces | Redraw from the drawn thick outline | slabs | [IMPORTED KPwBI] |

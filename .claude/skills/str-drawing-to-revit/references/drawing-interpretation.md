@@ -24,7 +24,17 @@ How to read, cross-reference and extract data from structural drawings *before* 
 Rule: **a single drawing is never the complete source.** Position from plan, size from schedule/detail, height from section — and check them against each other.
 
 ### Typical sheet order of an Indonesian structural DED set `[IMPORTED KPwBI]`
-Foundation (existing) → plans per floor (existing, then retrofit) → column plan + schedule → jacketing types and details → beam reinforcement details → beam strengthening → slab details (metal-deck sections) → roof truss plan + sections → connection details → canopy sheets → other structures (bridge, flagpole, green wall, remise canopy). Use it to find missing sheets quickly; do not assume every set follows it. Sheet-title words `[THEORY]` (general Indonesian usage; only `Eksisting`/`Bongkaran` came from KPwBI): `Denah` = plan, `Potongan` = section, `Detail`, `Eksisting` = existing, `Bongkaran` = demolition, `Rencana` = proposed.
+Foundation (existing) → plans per floor (existing, then retrofit) → column plan + schedule → jacketing types and details → beam reinforcement details → beam strengthening → slab details (metal-deck sections) → roof truss plan + sections → connection details → canopy sheets → other structures (bridge, flagpole, green wall, remise canopy). Use it to find missing sheets quickly; do not assume every set follows it. Schedule vocabulary seen on real Indonesian sets `[VERIFIED 2026-11-20, sample sets DRC Kalimantan, RSUD Cakung, KPwBI GKU, Hunver OIKN]`:
+- Table titles: `TABEL PENULANGAN` (DRC), `TABEL PEMBESIAN KOLOM K1 - K7A` (RSUD), `TABULASI PENULANGAN BALOK` (KPwBI), `TIPE KOLOM / TIPE BALOK` inside the table header, `DENAH TIPE KOLOM` (a plan that shows the types, Hunver), `DENAH TIPE PERKUATAN KOLOM` (retrofit column types, KPwBI).
+- Column tables are grids of marks × level ranges (RSUD K1–K12 from PONDASI to ATAP; DRC "K2 LT.1–LT.2", "K2 LT.2 – LT. DAK ATAP"): **sizes change per level range**. Sizes are drawn as dimension numbers on the sketches, not written as "800x800".
+- `CONTOH TABULASI` / `STANDAR DETAIL` = an *example* table on a standard-details sheet, not the project's schedule (KPwBI p10 false hit).
+- Slab types can be named by thickness: `T12, T15, T20, T22` (DRC, "DETAIL PLAT LANTAI T15").
+- Stair sheets mention `KOLOM/BALOK BORDES`: not the main schedule.
+- The first pages usually hold `DAFTAR GAMBAR` (drawing index): read it first.
+- Some pages have no extractable text at all (14 of 84 in RSUD): look visually or ask.
+- Notes blocks give material grades: `MUTU BETON K-350`, `MUTU BESI ULIR BJTS fy=420 MPa` (DRC).
+
+Sheet-title words: `Denah` = plan, `Potongan` = section, `Detail`, `Eksisting` = existing, `Bongkaran` = demolition, `Rencana` = proposed.
 
 ## 3. Phase-1 inventory procedure
 1. List every sheet: number, title, revision/date, scale, page in file. `[THEORY]` Use `pdftotext -layout` for title blocks; `pdfinfo` for page count and size.

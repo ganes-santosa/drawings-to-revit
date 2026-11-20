@@ -1,0 +1,5 @@
+category,drawing_mark,level_range,dim_1_mm,dim_2_mm,profile_or_build_up,material,source_sheet,source_page,provenance,revit_family,revit_type,status,revit_type_id,notes
+OST_StructuralColumns,K1,L1-L2,600,600,,Beton fc' 30 MPa,S-301 rev B,12,EXPLICIT,<family>,<type>,exists|duplicate|load|new family|blocked,,b along X per schedule sketch
+OST_StructuralFraming,B2,L2,300,600,,Beton fc' 25 MPa,S-401 rev B,15,EXPLICIT,<family>,<type>,duplicate,,
+OST_StructuralFraming,BS1,Roof,,,WF350x175x7x11,BJ 37,S-601,22,EXPLICIT,<family>,<type>,load,,
+OST_Floors,S1,L2-L3,120,,Concrete 120,Beton fc' 25 MPa,S-501,18,EXPLICIT,Floor,<type>,duplicate,,

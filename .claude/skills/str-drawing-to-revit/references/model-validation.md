@@ -23,6 +23,7 @@ The check catalogue used by `workflows/quality-control-workflow.md`. Prefer numb
 | 13 | Y-justification / solid vs location | bbox centre vs LocationCurve | <1 mm lateral | [IMPORTED KPwBI] |
 | 14 | Family/type vs schedule | type dims vs schedule | exact | [THEORY] |
 | 15 | Level/grid read-back | elevations & endpoints vs tables | ≤0.5 mm | [THEORY] |
+| 17 | **Connectivity (nothing floats)** | `scripts/revit/check_connectivity.cs`: beam ends touch column/wall/beam; column bases on foundation/column/beam/wall; `CANTILEVER` in Comments excludes drawn cantilevers | 0 unexplained | [THEORY] script not yet run |
 | 16 | Orphans | elements without Mark or on wrong level | 0 | [THEORY] |
 
 ## 3. Reusable checker

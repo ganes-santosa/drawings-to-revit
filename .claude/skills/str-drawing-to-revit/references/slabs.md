@@ -1,38 +1,113 @@
 # Slabs — structural floors (OST_Floors)
 
-> Legend: SKILL.md §8 · Last reviewed: 2026-11-20 · Revit tested: 2026 (KPwBI, imported); not re-tested here
+> Legend: SKILL.md §8 · Last reviewed: 2026-11-20 · Revit tested: none here. KPwBI items imported (Revit 2026); API items `[THEORY]` until run.
+> Order of work: `workflows/element-modeling-workflow.md` (Stage A types → gate → Stage B placement → gate). This file supplies the slab-specific details for each step.
+> Support and connectivity rules (nothing floats): `building-logic.md` — read it before placing.
 
-## 1. Purpose and scope
-Slab outlines, thickness types, openings, steps, expansion-joint splits. Metal-deck slabs affect steel levels (`beams.md`).
+## 1. Scope
+Floor types (thickness, build-up, material), slab outlines, openings, levels and steps, splits at dilatation joints. Metal-deck slabs also set the steel level (`beams.md`). Not covered: rebar (parked), slab design.
 
-## 2. Drawing conventions
-Slab plan: thick outline (line width heavy), slab tags (S1, SN1A…) with a slab schedule (thickness, reinforcement); X-marked cells = voids; stair/shaft outlines = openings; falls/slopes by arrows; metal-deck sections on detail sheets; double thin line = expansion joint. Tag text is often readable by `pdftotext -bbox`.
+---
 
-## 3. Required inputs
-Outline polygon; tag → thickness (schedule **and** detail sheet); level and top elevation (SFL); openings; slopes/steps; joint locations.
+## A. Types
 
-## 4. Interpretation method
-- Outline = the drawn thick line, **not** beam faces or grid-derived guesses `[IMPORTED KPwBI]` (grid guess 1825/24575 vs drawn 1944/24458 with jogs; beam-face-edge slabs left cantilever stubs).
-- Compare schedule and detail thickness; on conflict ask (KPwBI: table 120 vs detail 150 metal deck → user chose 150) `[IMPORTED KPwBI]`.
-- Split at expansion joints.
+### A1. Where the slab types are on the drawings
+- **Slab schedule** (`TABEL PELAT`, `DAFTAR PELAT`, `SLAB SCHEDULE`): mark → thickness (+ rebar). Often a small table on the slab plan.
+- **Slab details**: build-ups, metal-deck sections. The detail can disagree with the table (KPwBI: table 120, detail 150 metal deck; the user chose 150) `[IMPORTED KPwBI]`.
+- Plan tags (S1, S2, SN1A …); tag text is often readable by `pdftotext -bbox` `[IMPORTED KPwBI]`.
+- Find it: `scripts/find_schedules.py <folder> --element slabs`; confirm visually; ask if unclear.
 
-## 5. Revit procedure
-1. Floor types per thickness/composition, named by thickness + tags, e.g. `PELAT BETON 120mm (S1/S2)`, `PELAT METAL DECK 150mm (SN1A/SN1B)` `[IMPORTED KPwBI]`, each with a type mark. Metal deck in KPwBI: 0.75 mm deck, 50 mm ribs + 100 mm topping = 150. Mark structural (`FLOOR_PARAM_IS_STRUCTURAL`) `[THEORY]`.
-2. Create via `Floor.Create(document, List<CurveLoop>, floorTypeId, levelId)` (Revit 2022+) `[THEORY]`; older: `NewFloor`. Offset from level so top = SFL (`FLOOR_HEIGHTABOVELEVEL_PARAM`).
-3. Openings as inner loops in the same CurveLoop list, or `NewOpening` `[THEORY]`.
-4. **Overlapping floors:** rebuilding a floor that overlaps a neighbour raises a modal "Highlighted floors overlap" warning that blocks the API and looks like a timeout. Rebuild in an order that never overlaps, few per call `[IMPORTED KPwBI]`.
-5. Mark and comment (tag, sheet, provenance).
+### A2. What to extract per type
+| Field | Notes |
+|---|---|
+| Mark | S1, S2, SN1A, PL1 … |
+| Thickness (mm) | from schedule **and** detail; conflict → ask |
+| Build-up | plain concrete, or metal deck (deck gauge, rib height, topping) |
+| Material | concrete grade if given |
+| Rebar | record only |
+| Source | sheet, revision, page, provenance |
 
-## 6. Verification
-Area per tag vs plan (±1%); no floor–floor bounding-box overlaps; every beam top at slab top above or documented step; no unsupported edges except drawn cantilevers/voids; openings match voids.
+### A3. Catalog notes
+- One floor type per thickness + build-up + material; the name lists the marks it serves (KPwBI: `PELAT BETON 120mm (S1/S2/S3/SN1A)`, `PELAT METAL DECK 150mm (SN1A/SN1B)`, each with a type mark) `[IMPORTED KPwBI]`.
+- KPwBI metal deck: 0.75 mm deck, 50 mm ribs + 100 mm topping = 150 `[IMPORTED KPwBI]`.
 
-## 7. Failure cases
+### A4–A5. Make the types in Revit
+Floors are a **system family**: no loadable family; duplicate an existing floor type and edit its compound structure.
+```csharp
+// [THEORY] call 1: duplicate a floor type
+var src = (FloorType)document.GetElement(new ElementId(SRC_FLOOR_TYPE_ID));
+var ft = (FloorType)src.Duplicate("PELAT BETON 120mm (S1/S2)");
+return ft.Id.ToString();
+```
+```csharp
+// [THEORY] call 2: single structural layer of the right thickness and material
+var ft = (FloorType)document.GetElement(new ElementId(NEW_ID));
+var cs = CompoundStructure.CreateSingleLayerCompoundStructure(MaterialFunctionAssignment.Structure, 120 / 304.8, new ElementId(MATERIAL_ID));
+ft.SetCompoundStructure(cs);
+ft.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_MARK).Set("S1");
+return "ok";
+```
+- Metal deck: a `StructuralDeck` layer with a deck profile (`CompoundStructure` deck settings) `[THEORY, OPEN]`; if unreliable, model the full thickness as concrete and note it.
+- Floor type must be **structural** (`FLOOR_PARAM_IS_STRUCTURAL` on the instance) `[THEORY]`.
+
+### A6. Gate
+Read back total thickness (`ft.GetCompoundStructure().GetWidth()` × 304.8) and the material per type; every slab mark on the plans resolves to a type.
+
+---
+
+## B. Placement
+
+### B1. Where the outlines and levels are
+Slab plan per level: thick outline, tags, X-marked voids, stair/shaft openings, slope arrows, dilatation joints (double thin line). Sections and level notes for SFL per zone.
+
+### B2. Instance table columns
+`mark | type | level | top elevation (SFL) | outline polygon (mm) | openings | slope | supports (beams/walls along edges, or columns) | cantilever edges | source | provenance`
+
+### B3. Interpretation rules
+1. **Outline = the drawn thick line,** not beam faces or grid guesses (KPwBI: grid guess 1825/24575 vs drawn 1944/24458 with jogs; beam-face edges left stubs) `[IMPORTED KPwBI]`.
+2. **Openings:** X-marked voids, stair and shaft outlines.
+3. **Split at dilatation joints;** each side is its own slab.
+4. **Top = SFL** of that zone; level offset = SFL − level elevation.
+5. **Supports:** every edge sits on a beam or wall, or is a drawn cantilever / void edge / joint face (building-logic §2). Model the beams first.
+
+### B4–B5. Revit procedure
+```csharp
+// [THEORY] one slab with one opening; points in mm
+Func<double[], CurveLoop> loop = (pts) => {
+    var cl = new CurveLoop();
+    for (int i = 0; i < pts.Length; i += 2) {
+        int j = (i + 2) % pts.Length;
+        cl.Append(Line.CreateBound(new XYZ(pts[i]/304.8, pts[i+1]/304.8, 0), new XYZ(pts[j]/304.8, pts[j+1]/304.8, 0)));
+    }
+    return cl;
+};
+var outer = loop(new double[] { 0,0, 12000,0, 12000,8000, 0,8000 });
+var hole  = loop(new double[] { 4000,3000, 4000,5000, 6000,5000, 6000,3000 }); // opposite direction
+var loops = new List<CurveLoop> { outer, hole };
+var f = Floor.Create(document, loops, new ElementId(FLOOR_TYPE_ID), new ElementId(LEVEL_ID));
+f.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).Set(OFFSET_MM / 304.8);
+f.get_Parameter(BuiltInParameter.FLOOR_PARAM_IS_STRUCTURAL).Set(1);
+f.get_Parameter(BuiltInParameter.ALL_MODEL_MARK).Set("PL2-001");
+f.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set("S1 | S-501 p18 | EXPLICIT");
+return f.Id.ToString();
+```
+- `double[]` arrays and `Func<>` instead of `int[]` and local functions (host compiler quirks) `[IMPORTED KPwBI]`.
+- **Overlapping floors:** rebuilding a floor that overlaps a neighbour raises a modal "Highlighted floors overlap" warning that blocks the API and looks like a timeout. Build in an order that never overlaps, a few floors per call `[IMPORTED KPwBI]`.
+- MCP alternative: `create_surface_based_element` (`OST_Floors`, outer loop only). It cannot make openings `[LIMITATION]`: use the script for slabs with voids.
+
+### B6. Verification
+- Area per mark vs the plan (±1%); outline vertices vs the instance table.
+- Top elevation = SFL per zone; every beam top at the slab top above or a documented step.
+- No floor–floor bounding-box overlaps; openings match the voids.
+- Edges supported (beams/walls) except drawn cantilevers, voids, joint faces.
+
+## Field notes and failure cases
 | Symptom | Cause | Fix | Status |
 |---|---|---|---|
-| API call hangs | Modal overlap warning in Revit | Non-overlapping rebuild order; dismiss dialog | [IMPORTED KPwBI] |
-| Stubs past slab | Edge at beam face | Redraw from thick outline | [IMPORTED KPwBI] |
-| Slabs invisible in plan | Template view filters ("Floors - Concrete NOT") | Remove filters from working views | [IMPORTED KPwBI] |
-| Wrong thickness | Used plan table, detail differs | Ask; log | [IMPORTED KPwBI] |
+| API call hangs | Modal overlap warning in Revit | Non-overlapping order; dismiss the dialog | [IMPORTED KPwBI] |
+| Slab stubs past the edge | Edge at beam face / grid | Redraw from the thick outline | [IMPORTED KPwBI] |
+| Slabs invisible in plan | Template view filters ("Floors - Concrete NOT") | Remove the filters from working views | [IMPORTED KPwBI] |
+| Wrong thickness | Plan table vs detail differ | Ask; log | [IMPORTED KPwBI] |
 
-## 8. Related
-`beams.md`, `structural-walls.md`, `stairs.md`, `model-validation.md`.
+## Related
+`building-logic.md`, `beams.md`, `views-and-documentation.md`, `model-validation.md`.

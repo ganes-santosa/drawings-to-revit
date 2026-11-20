@@ -3,7 +3,7 @@ name: str-drawing-to-revit
 description: Interpret structural engineering drawings (PDF/CAD plans, sections, details, schedules) and build an accurate, traceable, verified Autodesk Revit structural model. Use for modelling or checking columns, beams, slabs, foundations, walls, stairs, framing, reinforcement or connections from drawings, and for reviewing or troubleshooting such a model.
 metadata:
   version: 1.0.0
-argument-hint: "[beams|columns|slabs|foundations|walls|stairs|framing|reinforcement|connections|grids|setup|analyze|families|api|review|troubleshoot|learn|help] [task description]"
+argument-hint: "[setup|columns|beams|slabs|foundations|roof|analyze|review|troubleshoot|learn|help] [task description]"
 ---
 
 # STR Drawing to Revit
@@ -40,22 +40,29 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 | `analyze` (`analyse`, `inventory`, `read`) | `workflows/drawing-analysis-workflow.md`, `references/drawing-interpretation.md` | Phase 1 only: read the set, produce inventory + RFI list |
 | `setup` (`project`, `units`) | `references/project-setup.md`, `references/grids-and-levels.md` | Phase 2: units, coordinates, levels, grids |
 | `grids` (`levels`, `grid`, `level`) | `references/grids-and-levels.md` | Grids and levels only |
-| `columns` (`column`, `col`) | `workflows/element-modeling-workflow.md`, `references/columns.md` | |
-| `beams` (`beam`) | `workflows/element-modeling-workflow.md`, `references/beams.md` | |
-| `slabs` (`slab`, `floors`, `floor`) | `workflows/element-modeling-workflow.md`, `references/slabs.md` | |
-| `foundations` (`foundation`, `footings`, `footing`, `piles`, `pilecaps`) | `workflows/element-modeling-workflow.md`, `references/foundations.md` | Isolated, strip, raft, pile caps, piles |
-| `walls` (`wall`, `shearwalls`) | `workflows/element-modeling-workflow.md`, `references/structural-walls.md` | |
-| `stairs` (`stair`) | `workflows/element-modeling-workflow.md`, `references/stairs.md` | |
-| `framing` (`steel`, `trusses`, `truss`, `bracing`, `roof`) | `workflows/element-modeling-workflow.md`, `references/structural-framing.md` | Steel / truss / brace systems (beams.md covers plain beams) |
-| `reinforcement` (`rebar`, `reinf`) | `workflows/element-modeling-workflow.md`, `references/reinforcement.md` | |
-| `connections` (`connection`, `joints`) | `workflows/element-modeling-workflow.md`, `references/connections.md` | |
+| `columns` (`column`, `col`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/columns.md` | |
+| `beams` (`beam`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/beams.md` | |
+| `slabs` (`slab`, `floors`, `floor`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/slabs.md` | |
+| `foundations` (`foundation`, `footings`, `footing`, `piles`, `pilecaps`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/foundations.md` | Isolated, strip, raft, pile caps, piles |
+| `framing` (`steel`, `trusses`, `truss`, `bracing`, `roof`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/structural-framing.md` | Steel / truss / brace systems (beams.md covers plain beams) |
 | `families` (`family`, `types`) | `references/revit-families.md` | Family/type selection and creation |
 | `api` (`automation`, `mcp`, `probe`) | `references/revit-api-and-automation.md` | Tool probing, API patterns, script limits |
-| `views` (`view`, `documentation`, `sheets`, `filters`) | `references/views-and-documentation.md` | Inspection views, view filters, naming; sheets/tags (no standard yet) |
-| `review` (`qc`, `validate`, `check`, `audit`) | `workflows/quality-control-workflow.md`, `references/model-validation.md` | Compare model to drawings; report |
+| `review` (`qc`, `validate`, `check`, `audit`) | `workflows/quality-control-workflow.md`, `references/model-validation.md`, `references/building-logic.md` | Compare model to drawings; report |
 | `troubleshoot` (`debug`, `fix`, `error`) | `references/troubleshooting.md`, then the element reference for the failing element | Diagnose the current problem |
 | `learn` (`document`, `record`, `lesson`) | `references/lessons-learned.md`, `references/_template.md`, §8 below | Record a tested result into the right file |
 | `help` (`?`, `list`) | none | Print this table |
+
+### Parked routes (not in current focus)
+
+Current focus: **setup, columns, beams, slabs, foundations, roof (`framing`)**. The routes below still work but are untested stubs or low priority: say so to the user before using one, and do not spend effort improving them until the focus routes are verified.
+
+| Keyword (aliases) | Load | Purpose |
+|---|---|---|
+| `walls` (`wall`, `shearwalls`) | `workflows/element-modeling-workflow.md`, `references/structural-walls.md` | |
+| `stairs` (`stair`) | `workflows/element-modeling-workflow.md`, `references/stairs.md` | |
+| `reinforcement` (`rebar`, `reinf`) | `workflows/element-modeling-workflow.md`, `references/reinforcement.md` | |
+| `connections` (`connection`, `joints`) | `workflows/element-modeling-workflow.md`, `references/connections.md` | |
+| `views` (`view`, `documentation`, `sheets`, `filters`) | `references/views-and-documentation.md` | Inspection views, view filters, naming; sheets/tags (no standard yet) |
 
 **Adding a route:** (1) create `references/<topic>.md` from `references/_template.md`; (2) add one row above; (3) run `python ${CLAUDE_SKILL_DIR}/scripts/check_skill.py` — it fails if a row points at a missing file or a reference is unrouted; (4) add a line to `DEVLOG.md`. Nothing else needs rewriting.
 
@@ -75,11 +82,13 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 8. **Final-state modelling.** For renovation work, model the final condition. Check each sheet title for existing / demolition / new (`Eksisting`, `Existing`, `Bongkaran`, `Demolition`).
 9. **Ask when critical info is missing** and cannot be bounded safely. Offer 2–3 options with a recommendation. Explain any destructive or bulk change *before* running it, and never delete user-made elements without asking.
 10. **Never assume an API, family, parameter, or tool exists.** Probe first (`references/revit-api-and-automation.md`).
+11. **Nothing floats.** Every member must sit on or frame into a support, down to the foundation: beams into columns, walls or other beams; columns onto foundations or the column below; slabs onto beams or walls; roof members onto columns or beams. Plan the supports before placing, resolve beam end points from the supports (not from where the drawn line stops), and run the connectivity check after every batch. A free end is only allowed for a drawn cantilever. `references/building-logic.md`.
 
 ## 4. General Revit modelling principles
 
 - **One plan coordinate system** in all logs; write the conversion to Revit internal coordinates (including any axis flip and mm→ft = ÷304.8) once, in the project log.
 - **Order by dependency:** grids/levels → foundations → columns → walls → beams/framing → slabs → stairs → reinforcement/connections, *when the drawings give foundation levels*. Heights flow top-down: **slab top sets beam top, beam soffit sets column base, column base sets cap top**. If foundation levels are missing (common), model columns → beams level by level → slabs → foundations → roof steel → secondary items, as in KPwBI. Adapt to the structure (steel roof, flat slab with no beams). Details: `workflows/full-modeling-workflow.md` Phase 3.
+- **Core procedure for every element:** Stage A **types** (find the schedule, catalog every type, create the types, verify them: gate) before Stage B **placement** (instance table with supports, pilot one, batch, verify: gate). `workflows/element-modeling-workflow.md`.
 - **Incremental:** one level or one element family per step; small scripts; verify and log after each step. Never build the whole model in one script.
 - **Probe, then batch.** Place one test element, inspect its geometry/location/parameters, compare to the drawing, only then place the rest.
 - **Families over DirectShape** wherever a suitable family exists; DirectShape only where no family fits (and say so).

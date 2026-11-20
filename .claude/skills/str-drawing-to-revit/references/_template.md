@@ -1,37 +1,40 @@
-# <Topic> — <one-line scope>
+# <Element> — <one-line scope> (<OST category>)
 
-> Status legend: `[VERIFIED src]` `[IMPORTED src]` `[EXPERIMENTAL]` `[THEORY]` `[LIMIT]` `[OPEN]` `[CONTESTED]` (defined in SKILL.md §8). Untagged statements are not allowed for procedures.
-> Last reviewed: YYYY-MM-DD · Revit version(s) tested: <none yet | 2026 …>
+> Legend: `[VERIFIED src]` `[IMPORTED src]` `[EXPERIMENTAL]` `[THEORY]` `[LIMIT]` `[OPEN]` `[CONTESTED]` (defined in SKILL.md §8). Untagged statements are not allowed for procedures.
+> Last reviewed: YYYY-MM-DD · Revit tested: <none yet | 2026 …>
+> Order of work: `workflows/element-modeling-workflow.md` (Stage A types → gate → Stage B placement → gate). This file supplies the element-specific details for each step.
+> Support and connectivity rules (nothing floats): `building-logic.md`.
 
-## 1. Purpose and scope
+## 1. Scope
 What this file covers and what it deliberately does not (link instead).
 
-## 2. Drawing conventions and where the data lives
-How the element appears on plans/sections/schedules/details; tags, symbols, line types; which sheets to cross-reference.
+---
 
-## 3. Required inputs
-Minimum information needed before modelling. What to do when each item is missing (see SKILL.md §3.4, §5).
+## A. Types
+### A1. Where the types are on the drawings
+Schedule names (English + Indonesian), where they usually sit, other sources (plan tags, details). `find_schedules.py --element <x>`.
+### A2. What to extract per type
+Table: field | notes (mark, level range, dimensions, material, other properties, source).
+### A3. Catalog notes
+Element-specific reconciliation rules; type identity; naming.
+### A4–A5. Make the types in Revit
+Family choice, duplication with exact parameter names, loading, building from template, materials. Code snippets with status tags.
+### A6. Gate
+What to read back to prove every type is correct and placeable.
 
-## 4. Interpretation method
-Step-by-step extraction of size, position, elevation, orientation, type. Provenance labelling.
+---
 
-## 5. Revit modelling procedure
-Category, family/type choice, parameters, placement, orientation, joins/intersections. Numbered steps.
+## B. Placement
+### B1. Where the positions and heights are
+### B2. Instance table columns
+### B3. Interpretation rules
+### B4–B5. Revit procedure
+Snippets, justification/orientation, marks/comments, order (supports first), MCP alternatives and their limits.
+### B6. Verification
+Programmatic checks and tolerances.
 
-## 6. API / automation
-Verified snippets only in this section's *Verified* subsection; untested ideas go in *Untested*.
-### Verified
-### Untested
-
-## 7. Verification
-Programmatic checks and expected results.
-
-## 8. Failure cases and fixes
+## Field notes and failure cases
 | Symptom | Cause | Fix | Status |
 |---|---|---|---|
 
-## 9. Verified examples
-Dated, with project/Revit version.
-
-## 10. Related
-Links to other references/workflows.
+## Related

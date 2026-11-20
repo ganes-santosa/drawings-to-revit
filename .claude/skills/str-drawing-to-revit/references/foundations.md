@@ -2,6 +2,9 @@
 
 > Legend: SKILL.md §8 · Last reviewed: 2026-11-20 · Revit tested: 2026 (KPwBI, DirectShape convention); native foundation families untested
 
+> Order of work: `workflows/element-modeling-workflow.md` (Stage A types → gate → Stage B placement → gate). Restructuring this file into the A/B layout of `columns.md` is pending `[OPEN]`.
+> Support and connectivity rules (nothing floats): `building-logic.md` — read it before placing.
+
 ## 1. Purpose and scope
 Foundation identification, levels, and modelling. Pile design/capacity is out of scope.
 

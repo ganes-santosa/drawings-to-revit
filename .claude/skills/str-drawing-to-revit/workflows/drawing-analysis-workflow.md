@@ -5,6 +5,7 @@
 3. **Scale and units.** Per view, from dimension strings or grid spacing; flag insets.
 4. **Reference frame.** Grids (name, spacing), levels (FFL/SFL, datum per sheet group), joints.
 5. **Calibrate** plan sheets (`scripts/pdf_calibrate.py`); log residuals.
+5b. **Find the schedules** per element: `scripts/find_schedules.py <folder> --element <x>`; list the sheet/page of each table in the inventory.
 6. **Extract** element data per category into tables (mark, size, location, level, source, provenance).
 7. **Cross-reference** plan ↔ section ↔ detail ↔ schedule; count reconciliation against tables.
 8. **Conflict/missing list.** `assets/examples/rfi-log-template.md`: ID | topic | A says | B says | impact | proposed resolution.

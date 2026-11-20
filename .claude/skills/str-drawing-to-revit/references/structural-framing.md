@@ -3,6 +3,9 @@
 > Legend: SKILL.md §8 · Last reviewed: 2026-11-20 · Revit tested: 2026 (KPwBI imported)
 > Plain concrete/steel floor beams: `beams.md`.
 
+> Order of work: `workflows/element-modeling-workflow.md` (Stage A types → gate → Stage B placement → gate). Restructuring this file into the A/B layout of `columns.md` is pending `[OPEN]`.
+> Support and connectivity rules (nothing floats): `building-logic.md` — read it before placing.
+
 ## 1. Purpose and scope
 Truss geometry, rafters, purlins, braces, hip/valley members, double angles, canopies.
 
