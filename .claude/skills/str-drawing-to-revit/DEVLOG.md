@@ -2,6 +2,9 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-20 — v1.0.0 release
+- First tagged release: modular skill + full KPwBI legacy knowledge (v0.1–v0.3 below). Revit-side procedures remain `[IMPORTED]`/`[THEORY]` until live tests.
+
 ## 2026-11-20 — v0.3 legacy knowledge fully integrated
 - Archived the original single-file skill verbatim: `assets/legacy/structural-drawings-to-revit-v1-KPwBI.md` + mapping README.
 - Compared every legacy item with the modular skill. Added what had been lost or generalised away:
