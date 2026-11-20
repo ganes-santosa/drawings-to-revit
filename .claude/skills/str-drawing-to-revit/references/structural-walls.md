@@ -18,7 +18,7 @@ Determine whether drawn lines are faces or centreline; pick location line accord
 1. `Wall.Create(document, Curve, wallTypeId, levelId, heightFt, offsetFt, flip, structural=true)`.
 2. Set `WALL_KEY_REF_PARAM` (location line), `WALL_STRUCTURAL_USAGE_PARAM`, top constraint (`WALL_HEIGHT_TYPE`) and offsets.
 3. Openings: place via wall-hosted families or `document.Create.NewOpening(wall, p1, p2)`.
-4. Step walls beside slab level changes (see `beams.md` §4.3, `[VERIFIED KPwBI]` convention).
+4. Step walls beside slab level changes (see `beams.md` §4.3, `[IMPORTED KPwBI]` convention).
 5. Join with columns/beams/slabs; check joins visually and by geometry.
 
 ## 6. Verification

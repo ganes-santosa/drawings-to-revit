@@ -14,23 +14,23 @@ Mark → section size; plan centreline (from faces pair) and end points; top ele
 
 ## 4. Interpretation method
 1. Centreline = midpoint of face pair; width check against schedule `b`. Ends: at column face/centre as drawn, or at girder face.
-2. Elevation: top = SFL of supported slab unless drawn otherwise. Under a **metal-deck slab**, steel top = SFL − slab thickness `[VERIFIED KPwBI]`.
-3. Steps ≤ 400 mm → boundary beam takes higher SFL; large steps (1.7–2.1 m) → boundary beam at lower level + step walls `[VERIFIED KPwBI]` (confirm with user — it is a modelling convention, not drawn).
+2. Elevation: top = SFL of supported slab unless drawn otherwise. Under a **metal-deck slab**, steel top = SFL − slab thickness `[IMPORTED KPwBI]`.
+3. Steps ≤ 400 mm → boundary beam takes higher SFL; large steps (1.7–2.1 m) → boundary beam at lower level + step walls `[IMPORTED KPwBI]` (confirm with user — it is a modelling convention, not drawn).
 4. Eccentric beams modelled as drawn. Nothing crosses expansion joints.
 5. Label provenance of each value (SKILL.md §3.3).
 
 ## 5. Revit procedure
 1. Category Structural Framing; family e.g. concrete rectangular beam, types named `BEAM bxhmm`; steel types by profile (`WF350x175x7x11`). Check existence first (`revit-families.md`); duplicate type only if exact size missing, flag if substituting.
 2. Create: `document.Create.NewFamilyInstance(Curve, FamilySymbol, Level, StructuralType.Beam)` `[THEORY]` (standard API); activate symbol first (`symbol.Activate()`).
-3. **Set Z justification Top and apply vertical offset so top = SFL** via the end-offset parameters (`Z_OFFSET_VALUE`/start-end level offsets) `[VERIFIED KPwBI]`.
-4. **Set Y_JUSTIFICATION = 1 (Center)** on every beam `[VERIFIED KPwBI]` — see failures.
-5. **Joins:** `StructuralFramingUtils.DisallowJoinAtEnd(familyInstance, 0|1)` at every end **not** inside a column footprint; keep column joins `[VERIFIED KPwBI]`.
-6. **Merge collinear same-type beams** meeting at a column into one continuous member (602 → 492 in KPwBI); keep secondaries split where they frame into girders `[VERIFIED KPwBI]`.
-7. Sloped members (knee braces): place as `StructuralType.Beam` with sloped ends — the Brace type snapped its top to the beam centreline `[VERIFIED KPwBI]`.
-8. Marks and comments (Section 3 rules). `ALL_MODEL_MARK`, `ALL_MODEL_INSTANCE_COMMENTS` `[VERIFIED KPwBI]`.
+3. **Set Z justification Top and apply vertical offset so top = SFL** via the end-offset parameters (`Z_OFFSET_VALUE`/start-end level offsets) `[IMPORTED KPwBI]`.
+4. **Set Y_JUSTIFICATION = 1 (Center)** on every beam `[IMPORTED KPwBI]` — see failures.
+5. **Joins:** `StructuralFramingUtils.DisallowJoinAtEnd(familyInstance, 0|1)` at every end **not** inside a column footprint; keep column joins `[IMPORTED KPwBI]`.
+6. **Merge collinear same-type beams** meeting at a column into one continuous member (602 → 492 in KPwBI); keep secondaries split where they frame into girders `[IMPORTED KPwBI]`.
+7. Sloped members (knee braces): place as `StructuralType.Beam` with sloped ends — the Brace type snapped its top to the beam centreline `[IMPORTED KPwBI]`.
+8. Marks and comments (Section 3 rules). `ALL_MODEL_MARK`, `ALL_MODEL_INSTANCE_COMMENTS` `[IMPORTED KPwBI]`.
 
 ## 6. API / automation
-### Verified `[VERIFIED KPwBI, Revit 2026, mcp-server-for-revit]`
+### Imported `[IMPORTED KPwBI, Revit 2026, mcp-server-for-revit]`
 - Parameters: `BuiltInParameter.ALL_MODEL_MARK`, `ALL_MODEL_INSTANCE_COMMENTS`; `Y_JUSTIFICATION` instance parameter (value 1 = Center).
 - `StructuralFramingUtils.DisallowJoinAtEnd`.
 - `ElementTransformUtils.MoveElement` for bulk moves (44 beams 950 mm down); append reason to Comments.
@@ -40,7 +40,7 @@ Mark → section size; plan centreline (from faces pair) and end points; top ele
 
 ## 7. Verification
 - Count by mark/type vs beam schedule.
-- Each beam: `LocationCurve` endpoints vs calibrated drawing centreline (≤16 mm = line-weight noise; investigate >30 mm) `[VERIFIED KPwBI]`.
+- Each beam: `LocationCurve` endpoints vs calibrated drawing centreline (≤16 mm = line-weight noise; investigate >30 mm) `[IMPORTED KPwBI]`.
 - Solid-vs-location check: bounding-box centre of one test beam vs its LocationCurve (detects Y-justification error).
 - Top elevation = SFL of the slab above (or documented step/step wall).
 - No duplicates (same type, collinear, overlapping); no beam crossing a joint; free ends listed (each must be a drawn cantilever, joint face or void edge).
@@ -49,14 +49,14 @@ Mark → section size; plan centreline (from faces pair) and end points; top ele
 ## 8. Failure cases
 | Symptom | Cause | Fix | Status |
 |---|---|---|---|
-| Beams offset sideways by (b−200)/2 (300 mm for 800 wide) | Default Y justification; family flexes one face only | Set Y_JUSTIFICATION = 1 on all beams; test one beam's solid vs location first | [VERIFIED KPwBI] |
-| Beams notched/trimmed strangely | Auto-join to unrelated members | DisallowJoinAtEnd at non-column ends | [VERIFIED KPwBI] |
-| Hundreds of fragments, hard to audit | One beam per bay | Merge collinear at columns | [VERIFIED KPwBI] |
-| Beams crossing expansion joint | Modelled grid-to-grid | Stop at joint; add joint beams | [VERIFIED KPwBI] |
-| Secondary beams on wrong lines | Assumed nearest grid | Use drawn offsets (e.g. 1A−1200) | [VERIFIED KPwBI] |
-| Knee brace top snapped | Brace structural type | Use Beam type | [VERIFIED KPwBI] |
-| Eave beams 950 mm high | Misread end-on section label | Trace leaders (drawing-interpretation §5) | [VERIFIED KPwBI] |
-| Beam exists but not at drawn size | Nearest-size type substituted silently | Flag LOW CONFIDENCE or create exact type | [VERIFIED KPwBI] |
+| Beams offset sideways by (b−200)/2 (300 mm for 800 wide) | Default Y justification; family flexes one face only | Set Y_JUSTIFICATION = 1 on all beams; test one beam's solid vs location first | [IMPORTED KPwBI] |
+| Beams notched/trimmed strangely | Auto-join to unrelated members | DisallowJoinAtEnd at non-column ends | [IMPORTED KPwBI] |
+| Hundreds of fragments, hard to audit | One beam per bay | Merge collinear at columns | [IMPORTED KPwBI] |
+| Beams crossing expansion joint | Modelled grid-to-grid | Stop at joint; add joint beams | [IMPORTED KPwBI] |
+| Secondary beams on wrong lines | Assumed nearest grid | Use drawn offsets (e.g. 1A−1200) | [IMPORTED KPwBI] |
+| Knee brace top snapped | Brace structural type | Use Beam type | [IMPORTED KPwBI] |
+| Eave beams 950 mm high | Misread end-on section label | Trace leaders (drawing-interpretation §5) | [IMPORTED KPwBI] |
+| Beam exists but not at drawn size | Nearest-size type substituted silently | Flag LOW CONFIDENCE or create exact type | [IMPORTED KPwBI] |
 
 ## 9. Related
 `columns.md`, `slabs.md`, `structural-framing.md`, `connections.md`, `revit-families.md`, `model-validation.md`.

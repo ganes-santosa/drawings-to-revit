@@ -31,15 +31,15 @@ Rule: **a single drawing is never the complete source.** Position from plan, siz
 5. Build the cross-reference map: plan view → sections (section markers) → details (detail bubbles) → schedules (marks).
 6. Produce the **conflict / missing-information (RFI) list** before modelling. Template: `assets/examples/rfi-log-template.md`.
 
-## 4. PDF tooling `[VERIFIED container 2026-11-20]` (poppler + pdfplumber 0.11 present)
+## 4. PDF tooling `[IMPORTED container 2026-11-20]` (poppler + pdfplumber 0.11 present)
 - `pdftoppm -f N -l N -r 300 -png in.pdf out` — crops to read visually. ~400 dpi for labels, 500–900 dpi for overlays.
 - `pdftotext -layout|-raw|-bbox` — text, sheet codes, tags. `-bbox` gives word positions.
-- `pdfplumber` — vector `lines`, `rects`, `curves`, with `linewidth`/`stroking_color`/dash info. `[VERIFIED KPwBI]` an SVG conversion route dropped thin dashed and arc linework that pdfplumber kept.
+- `pdfplumber` — vector `lines`, `rects`, `curves`, with `linewidth`/`stroking_color`/dash info. `[IMPORTED KPwBI]` an SVG conversion route dropped thin dashed and arc linework that pdfplumber kept.
 - **Calibration is mandatory before any measurement:** `scripts/pdf_calibrate.py` (piecewise grid-to-grid; see `grids-and-levels.md` §5).
 - `[LIMIT]` Vector text/labels are often outlined glyphs: tools return nothing. Read them visually at high dpi and re-check critical ones.
 - `[LIMIT]` Scanned/raster PDFs have no vectors: measurement accuracy is limited to pixel resolution; calibrate on dimension ticks and state reduced confidence.
 
-## 5. Interpretation lessons (all `[VERIFIED KPwBI]` unless tagged)
+## 5. Interpretation lessons (all `[IMPORTED KPwBI]` unless tagged)
 - **Line weights carry meaning, per project.** In that set: paired dashed lines (6.0) = beam faces; 7.0 = slab/building outline; 2.0 X-marks = voids; grey hatch = waterproofing. An X pattern in a slab cell was void marking, not bracing. *Always read the legend and measure line widths; never assume these values transfer.* `[THEORY]` for other projects.
 - **Existing vs new:** a foundation plan titled "Eksisting" showed 4 caps belonging to a demolished frame. Ask for each element: remain / demolish / new.
 - **Section labels pointing at end-on members:** a "WF250x125" leader pointed to an I-section drawn end-on (an eave beam running perpendicular to the section). Misreading it created 30 spurious posts and put 44 beams 950 mm high. Trace leaders to what they touch; ask "is this a cut member?".
@@ -67,7 +67,7 @@ Drawn-but-undimensioned elements are modelled with best evidence and flagged (SK
 ## 7. Common failure cases
 | Symptom | Cause | Fix |
 |---|---|---|
-| Whole model shifted by tens of mm | Single global scale instead of piecewise calibration | Re-calibrate per sheet per axis `[VERIFIED KPwBI]` |
+| Whole model shifted by tens of mm | Single global scale instead of piecewise calibration | Re-calibrate per sheet per axis `[IMPORTED KPwBI]` |
 | Wrong member count vs table | Misidentified glyphs/tags | Cross-check counts against schedule |
 | Members in impossible places | Read a section cut as a plan element | Trace leaders; check cut direction |
 | Using demolished geometry | Skipped sheet-title status check | Classify every sheet in Phase 1 |

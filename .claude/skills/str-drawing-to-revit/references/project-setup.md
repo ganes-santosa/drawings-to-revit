@@ -11,11 +11,11 @@ Drawing units & scale (from Phase 1); whether the Revit file already exists, and
 ## 3. Procedure
 1. **Probe the environment** (`revit-api-and-automation.md` §3): Revit version, document title, units, existing levels/grids/families. Record in the project log.
 2. **Units.** Revit stores length internally in feet. `[THEORY]` mm→ft = ÷304.8 (verified arithmetic; used throughout KPwBI). Check `Document.GetUnits()` display units; internal units are unaffected by display units. Never feed mm numbers into the API without converting.
-3. **Single plan coordinate system for all logs:** state it explicitly, e.g. "x = mm east of grid A, y = mm south of first grid row". `[VERIFIED KPwBI]` Revit internal conversion in that job was `X = x − 217837`, `Y = 172339 − y` (axis flip), ft = mm/304.8. *Write your own conversion and its axis flip in the log; never reuse these numbers.*
+3. **Single plan coordinate system for all logs:** state it explicitly, e.g. "x = mm east of grid A, y = mm south of first grid row". `[IMPORTED KPwBI]` Revit internal conversion in that job was `X = x − 217837`, `Y = 172339 − y` (axis flip), ft = mm/304.8. *Write your own conversion and its axis flip in the log; never reuse these numbers.*
 4. **Decide the Revit origin strategy**: model near internal origin, or at shared coordinates; do not move project base/survey points without asking. `[THEORY]`
-5. **Naming and marks.** Propose a scheme and get confirmation. Pattern that worked `[VERIFIED KPwBI]`: Mark `K-<grid>/<row>-S<n>` (columns), `BL<n>-W|E|T-nnn` (beams), `PC-<type>-<grid>` (pile caps), `TB-<type>-x/y` (bored piles). Comments: source sheet, drawing tag/type, provenance, `LOW CONFIDENCE` where applicable.
+5. **Naming and marks.** Propose a scheme and get confirmation. Pattern that worked `[IMPORTED KPwBI]`: Mark `K-<grid>/<row>-S<n>` (columns), `BL<n>-W|E|T-nnn` (beams), `PC-<type>-<grid>` (pile caps), `TB-<type>-x/y` (bored piles). Comments: source sheet, drawing tag/type, provenance, `LOW CONFIDENCE` where applicable.
 6. **Create the project log** from `assets/examples/project-log-template.md` (inputs, conversion, levels, conflicts, assumptions, not-modelled list, counts). Update after every step.
-7. **Do not put the AI's name in view or element names** (user preference `[VERIFIED KPwBI]`). Use project-style names from the start.
+7. **Do not put the AI's name in view or element names** (user preference `[IMPORTED KPwBI]`). Use project-style names from the start.
 
 ## 4. Verification
 Log contains: units, conversion with axis flip, level table, grid table, conventions, tool/version. A one-element round trip: place a marker at a known plan coordinate → read back → matches the drawing within tolerance.

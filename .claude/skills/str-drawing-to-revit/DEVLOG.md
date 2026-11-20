@@ -2,6 +2,14 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-20 — v0.2 local sync and tag cleanup
+- Project now developed locally (D:/Outpost/Coding/str-to-revit); GitHub is a backup, push/pull only on request.
+- Environment record corrected: local Windows machine, Revit 2026 installed, MCP tools present, Revit not running -> connection failed.
+- Retagged all `[VERIFIED KPwBI]` / `[VERIFIED container]` to `[IMPORTED ...]`; added `[IMPORTED]` to the tag table. `[VERIFIED]` now means run in this setup.
+- Skill-syntax claim now cites the official docs instead of an unchecked binary version.
+- Command hints use `python` (Windows) instead of `python3`.
+- Next: live tests 1-6 (assets/examples/live-test-plan.md); fold `drawing-extract` into the `analyze` route; resolve overlap with the installed plugin skill.
+
 ## 2026-11-20 — v0.1 architecture established
 - Replaced the single-file legacy skill `structural-drawings-to-revit` with a modular skill: `SKILL.md` orchestrator, 17 references, 4 workflows, `scripts/`, `assets/examples/`.
 - Argument routing in SKILL.md §1–2 (keywords + aliases; leading keywords select route, remaining text = task; empty → full; unknown → keyword list + closest match). Mechanics verified against Claude Code 2.1.329 (`$ARGUMENTS`, `${CLAUDE_SKILL_DIR}`, `argument-hint`).

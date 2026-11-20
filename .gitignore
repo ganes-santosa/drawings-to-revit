@@ -1,0 +1,8 @@
+samples/
+out/
+*.rvt
+*.rfa
+*.dwg
+*.pdf
+__pycache__/
+.venv/

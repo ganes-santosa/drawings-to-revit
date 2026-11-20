@@ -12,10 +12,10 @@ Column layout plan (marks at grid intersections, offsets from grid dimensioned);
 Mark; size (b×h / profile); plan position incl. offset; base level; top level; orientation of b vs h; whether a stack exists on each storey.
 
 ## 4. Interpretation method
-1. Take final sizes (jacketed where `JK` applies; existing size where no JK type applies) `[VERIFIED KPwBI]`.
-2. Split each column into **stacks per storey** (S1 base→L1 slab, S2, …). No stack where drawings show none above `[VERIFIED KPwBI]`.
-3. **Base level:** if the drawings give no pile-cap/footing top, base = soffit of the deepest beam framing in at the lowest floor, flagged `LOW CONFIDENCE`; and the cap top is set to column base `[VERIFIED KPwBI]` (a modelling convention — confirm with the user).
-4. Orientation: assume b along X, h along Y only if undrawn; log the assumption (`[VERIFIED KPwBI]` was assumed and logged) and check against column schedule sketches.
+1. Take final sizes (jacketed where `JK` applies; existing size where no JK type applies) `[IMPORTED KPwBI]`.
+2. Split each column into **stacks per storey** (S1 base→L1 slab, S2, …). No stack where drawings show none above `[IMPORTED KPwBI]`.
+3. **Base level:** if the drawings give no pile-cap/footing top, base = soffit of the deepest beam framing in at the lowest floor, flagged `LOW CONFIDENCE`; and the cap top is set to column base `[IMPORTED KPwBI]` (a modelling convention — confirm with the user).
+4. Orientation: assume b along X, h along Y only if undrawn; log the assumption (`[IMPORTED KPwBI]` was assumed and logged) and check against column schedule sketches.
 
 ## 5. Revit procedure
 1. Family/type: concrete rectangular column types `COLUMN bxh`; steel via UC/H-column families; duplicate types for missing profiles (`revit-families.md`).
@@ -31,9 +31,9 @@ Count vs schedule per mark×level; each stack continuous base→top with no gaps
 ## 7. Failure cases
 | Symptom | Cause | Fix | Status |
 |---|---|---|---|
-| Columns floating above foundation | Base level undefined | Use documented base rule; flag LOW CONFIDENCE | [VERIFIED KPwBI] |
-| Wrong orientation | b/h assumed | Check schedule sketch / ask | [VERIFIED KPwBI] (assumption logged) |
-| Extra posts beside columns | Misread end-on label | Trace leaders | [VERIFIED KPwBI] |
+| Columns floating above foundation | Base level undefined | Use documented base rule; flag LOW CONFIDENCE | [IMPORTED KPwBI] |
+| Wrong orientation | b/h assumed | Check schedule sketch / ask | [IMPORTED KPwBI] (assumption logged) |
+| Extra posts beside columns | Misread end-on label | Trace leaders | [IMPORTED KPwBI] |
 
 ## 8. Related
 `foundations.md`, `beams.md`, `revit-families.md`, `model-validation.md`.

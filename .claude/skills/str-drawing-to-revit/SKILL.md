@@ -54,7 +54,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 | `learn` (`document`, `record`, `lesson`) | `references/lessons-learned.md`, `references/_template.md`, §8 below | Record a tested result into the right file |
 | `help` (`?`, `list`) | none | Print this table |
 
-**Adding a route:** (1) create `references/<topic>.md` from `references/_template.md`; (2) add one row above; (3) run `python3 ${CLAUDE_SKILL_DIR}/scripts/check_skill.py` — it fails if a row points at a missing file or a reference is unrouted; (4) add a line to `DEVLOG.md`. Nothing else needs rewriting.
+**Adding a route:** (1) create `references/<topic>.md` from `references/_template.md`; (2) add one row above; (3) run `python ${CLAUDE_SKILL_DIR}/scripts/check_skill.py` — it fails if a row points at a missing file or a reference is unrouted; (4) add a line to `DEVLOG.md`. Nothing else needs rewriting.
 
 **Dependencies between routes.** Element routes assume levels, grids, units and coordinates already exist. If the Revit model lacks them, run `setup` first (or confirm with the user).
 
@@ -114,15 +114,16 @@ This skill grows only from **tested results**. After any modelling operation tha
 
 | Tag | Meaning |
 |---|---|
-| `[VERIFIED <source, Revit ver>]` | Executed in Revit and the resulting model inspected. |
+| `[VERIFIED <source, Revit ver>]` | Executed in THIS setup (local Revit + MCP) and the resulting model inspected. |
+| `[IMPORTED <source>]` | Taken from an earlier real project (e.g. KPwBI) but NOT re-run here. Use as a hypothesis: test on one element, then promote to `[VERIFIED]`. |
 | `[EXPERIMENTAL]` | Worked once or under narrow conditions; not yet repeated. Use with a check. |
 | `[THEORY]` | Standard knowledge or API documentation; **not tested in this setup**. Verify before relying on it. |
 | `[LIMIT]` | Known limitation of a tool, API, or family. |
 | `[OPEN]` | Unresolved issue or unanswered question. |
 | `[CONTESTED]` | Previously verified, now contradicted; re-test. |
 
-`[VERIFIED KPwBI]` = from the KPwBI DIY Gedung Utama project (Revit 2026, `mcp-server-for-revit`, ~840 framing members). Treat as strong evidence but re-confirm with a one-element test in a new environment.
+`[IMPORTED KPwBI]` = from the KPwBI DIY Gedung Utama project (Revit 2026, `mcp-server-for-revit`, ~840 framing members). Strong evidence, but second-hand: re-confirm with a one-element test here, then retag `[VERIFIED]`.
 
 ## 9. Environment note
 
-Claude Code skill mechanics used here (verified against Claude Code 2.1.329): frontmatter `name`, `description`, `argument-hint`; `$ARGUMENTS` substitution; `${CLAUDE_SKILL_DIR}`; supporting files are loaded on demand via Read. If a future Claude Code version changes this, update this section and `DEVLOG.md`.
+Claude Code skill mechanics used here, checked against the official docs (code.claude.com/docs/en/skills, 2026-11-20): frontmatter `name`, `description`, `argument-hint`; `$ARGUMENTS` substitution; `${CLAUDE_SKILL_DIR}`; supporting files loaded on demand via Read; `SKILL.md` kept under 500 lines. The `claude` binary version was not checked on this machine. Revit-side environment: `references/revit-api-and-automation.md` §2.

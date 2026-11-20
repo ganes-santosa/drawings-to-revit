@@ -1,6 +1,6 @@
 # <Topic> — <one-line scope>
 
-> Status legend: `[VERIFIED src]` `[EXPERIMENTAL]` `[THEORY]` `[LIMIT]` `[OPEN]` `[CONTESTED]` (defined in SKILL.md §8). Untagged statements are not allowed for procedures.
+> Status legend: `[VERIFIED src]` `[IMPORTED src]` `[EXPERIMENTAL]` `[THEORY]` `[LIMIT]` `[OPEN]` `[CONTESTED]` (defined in SKILL.md §8). Untagged statements are not allowed for procedures.
 > Last reviewed: YYYY-MM-DD · Revit version(s) tested: <none yet | 2026 …>
 
 ## 1. Purpose and scope

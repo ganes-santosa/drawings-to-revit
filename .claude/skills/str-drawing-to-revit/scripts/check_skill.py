@@ -3,7 +3,7 @@
 
 Fails if: a routing-table row in SKILL.md names a missing file, a reference/workflow
 is not routed, a relative markdown link is broken, a reference lacks a status legend,
-or required frontmatter is missing.  Usage: python3 check_skill.py
+or required frontmatter is missing.  Usage: python check_skill.py
 """
 import re, sys
 from pathlib import Path
