@@ -2,7 +2,7 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
-## 2026-11-20 — v1.1.0 (unreleased) focus + building logic
+## 2026-11-20 — v1.1.0 focus, building logic, core procedure
 - Focus narrowed to setup, columns, beams, slabs, foundations, roof (`framing`). Walls, stairs, reinforcement, connections, views moved to "Parked routes" in SKILL.md.
 - New global rule 11 "Nothing floats" + `references/building-logic.md` (load path, valid supports per element, support table, end-point rules, join notes). Loaded by every focus element route and by `review`.
 - New `scripts/revit/check_connectivity.cs` (read-only floating-end and column-base check) and validation check #17. Not yet run in Revit.
