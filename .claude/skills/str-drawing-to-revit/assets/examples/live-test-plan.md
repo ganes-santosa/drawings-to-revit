@@ -13,9 +13,7 @@ Purpose: promote `[THEORY]` items to `[VERIFIED …]`. Use a **scratch project**
 | 7 | DisallowJoinAtEnd; join behaviour at column | no notch | beams |
 | 8 | Column: base/top level + offsets, rotation | positions as set | columns |
 | 9 | Floor.Create with opening; thickness type; top offset | area, top elev | slabs |
-| 10 | Wall.Create structural, location line | position | structural-walls |
 | 11 | Foundation: native `Footing` vs DirectShape extrusion | both created | foundations |
 | 12 | `document.GetWarnings()` extraction + bbox clash helper | works | model-validation |
 | 13 | Selected-elements tool; view creation (plan, 3D with section box) | works | api / troubleshooting |
-| 14 | Stair run, rebar sample, connection availability | documented or `[LIMIT]` | stairs / reinforcement / connections |
-| 15 | End-to-end pilot on a real drawing sheet (user supplies PDF) | QC passes | all |
+| 14 | End-to-end pilot on a real drawing sheet (user supplies PDF) | QC passes | all |

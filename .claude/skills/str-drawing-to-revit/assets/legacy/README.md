@@ -13,7 +13,7 @@ All of its knowledge has been distributed into `references/` and `workflows/`, t
 | Part 3.1 coordinates/levels | project-setup.md, grids-and-levels.md |
 | Part 3.2–3.6 elements | columns.md, beams.md, slabs.md, structural-framing.md, foundations.md, revit-families.md |
 | Part 3.7 MCP/API mechanics | revit-api-and-automation.md §4 |
-| Part 4 documentation and views | views-and-documentation.md |
+| Part 4 documentation and views | removed from focus (view naming rules and the template-filter gotcha are in troubleshooting.md) |
 | Part 5 troubleshooting table | troubleshooting.md (index) + element files |
 | Part 6 QC checklist | model-validation.md §2, workflows/quality-control-workflow.md |
 

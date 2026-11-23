@@ -19,6 +19,7 @@ Grid names & spacings (explicit dimensions, not scaled), level names & elevation
 ## 5. PDF-to-model calibration `[IMPORTED KPwBI]` method · script `[IMPORTED container 2026-11-20]`
 - Find the **vector grid lines** on the sheet (pdfplumber), record their pt coordinates; map pt→mm **piecewise, grid-to-grid, per axis**. Never one global scale.
 - Failure that justified this: assuming row 1' at 310.0 pt (vs true 308.93 pt) and 105.88 mm/pt (vs ~105.84) shifted a roof ~112 mm and an east wing 30–43 mm and went unnoticed through several checks.
+- **Sheets shift against each other** `[VERIFIED RSUD]`: one plan page sat 45.3 pt lower than its sister sheets, and an automatic grid alignment locked onto the wrong grid spacing (off by a whole multiple of ~28 pt), placing a whole floor wrong. Align each sheet to **its own** grids with a *constrained* shift search, and check one known column per sheet.
 - After calibrating, confirm known on-grid members land on grid (error check on every grid line) before measuring anything.
 - Tool: `python ${CLAUDE_SKILL_DIR}/scripts/pdf_calibrate.py --help` (piecewise calibrator + residual report; self-test included).
 

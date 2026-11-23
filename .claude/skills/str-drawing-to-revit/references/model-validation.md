@@ -23,7 +23,8 @@ The check catalogue used by `workflows/quality-control-workflow.md`. Prefer numb
 | 13 | Y-justification / solid vs location | bbox centre vs LocationCurve | <1 mm lateral | [IMPORTED KPwBI] |
 | 14 | Family/type vs schedule | type dims vs schedule | exact | [THEORY] |
 | 15 | Level/grid read-back | elevations & endpoints vs tables | ≤0.5 mm | [THEORY] |
-| 17 | **Connectivity (nothing floats)** | `scripts/revit/check_connectivity.cs`: beam ends touch column/wall/beam; column bases on foundation/column/beam/wall; `CANTILEVER` in Comments excludes drawn cantilevers | 0 unexplained | [THEORY] script not yet run |
+| 17 | **Connectivity (nothing floats)** | `scripts/revit/check_connectivity.cs`: connected-end rule (column bbox ±20 mm, or on another beam within half-width + 30 mm and between its ends); column bases on foundation/column/beam/wall; `CANTILEVER` excluded | 0 unexplained | rule [VERIFIED RSUD]; this script [THEORY] |
+| 18 | **Beam audit per floor** | free ends (cantilever tips vs others, listed), collinear overlaps > 50 mm, duplicate marks, beams through a column interior, long unsupported spans, LOW CONFIDENCE count (`beams.md` B6) | 0 / user-accepted list | audit [VERIFIED RSUD]; thresholds [EXPERIMENTAL RSUD]; script not in repo yet |
 | 16 | Orphans | elements without Mark or on wrong level | 0 | [THEORY] |
 
 ## 3. Reusable checker

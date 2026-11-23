@@ -52,17 +52,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 | `learn` (`document`, `record`, `lesson`) | `references/lessons-learned.md`, `references/_template.md`, §8 below | Record a tested result into the right file |
 | `help` (`?`, `list`) | none | Print this table |
 
-### Parked routes (not in current focus)
-
-Current focus: **setup, columns, beams, slabs, foundations, roof (`framing`)**. The routes below still work but are untested stubs or low priority: say so to the user before using one, and do not spend effort improving them until the focus routes are verified.
-
-| Keyword (aliases) | Load | Purpose |
-|---|---|---|
-| `walls` (`wall`, `shearwalls`) | `workflows/element-modeling-workflow.md`, `references/structural-walls.md` | |
-| `stairs` (`stair`) | `workflows/element-modeling-workflow.md`, `references/stairs.md` | |
-| `reinforcement` (`rebar`, `reinf`) | `workflows/element-modeling-workflow.md`, `references/reinforcement.md` | |
-| `connections` (`connection`, `joints`) | `workflows/element-modeling-workflow.md`, `references/connections.md` | |
-| `views` (`view`, `documentation`, `sheets`, `filters`) | `references/views-and-documentation.md` | Inspection views, view filters, naming; sheets/tags (no standard yet) |
+**Focus:** setup, columns, beams, slabs, foundations, roof (`framing`). Other element types (walls, stairs, reinforcement, connections, views) were removed to stay focused; they can be restored from git tag `v1.1.0` and re-added as routes.
 
 **Adding a route:** (1) create `references/<topic>.md` from `references/_template.md`; (2) add one row above; (3) run `python ${CLAUDE_SKILL_DIR}/scripts/check_skill.py` — it fails if a row points at a missing file or a reference is unrouted; (4) add a line to `DEVLOG.md`. Nothing else needs rewriting.
 
@@ -75,7 +65,7 @@ Current focus: **setup, columns, beams, slabs, foundations, roof (`framing`)**. 
 1. **Never invent** dimensions, elevations, member sizes, materials, or specifications.
 2. **Never silently resolve a conflict** between drawings, schedules, details or notes. Log it, show the sources, and either ask or follow the documented precedence (§5) *and say so*.
 3. **Label provenance.** Every value is `EXPLICIT` (written on a drawing), `DERIVED` (computed from explicit values), `MEASURED` (scaled from verified-calibrated geometry) or `ASSUMED`. Anything not `EXPLICIT`/`DERIVED` is flagged in the element's Comments with `LOW CONFIDENCE` and logged.
-4. **Drawn but undimensioned** → model it from the best evidence (order: related sheet → calibrated measurement → repeated/adjacent elements → visual estimate), flag `LOW CONFIDENCE`. Leaving a drawn element out is worse than a flagged estimate. **Not drawn** → do not model. (User preference carried from field use.)
+4. **Drawn but undimensioned** → model it from the best evidence (order: related sheet → calibrated measurement → repeated/adjacent elements → visual estimate), flag `LOW CONFIDENCE`. Leaving a drawn element out is worse than a flagged estimate. This includes elements drawn in an unusual graphic convention (one-sided or outline-only edge beams): "model it, then tag it". **Not drawn** → do not model. (User preference carried from field use.)
 5. **Preserve drawn geometry**, including off-grid offsets and eccentricities. Never snap to a grid for convenience.
 6. **Traceability.** Every modelled element carries a Mark and a Comments entry: source sheet(s), tag/type from the drawing, provenance. Never leave Marks blank or duplicated.
 7. **No design decisions.** Do not resize, re-detail, or "fix" the structure. Report suspected drawing errors; do not correct them.
@@ -90,6 +80,7 @@ Current focus: **setup, columns, beams, slabs, foundations, roof (`framing`)**. 
 - **Order by dependency:** grids/levels → foundations → columns → walls → beams/framing → slabs → stairs → reinforcement/connections, *when the drawings give foundation levels*. Heights flow top-down: **slab top sets beam top, beam soffit sets column base, column base sets cap top**. If foundation levels are missing (common), model columns → beams level by level → slabs → foundations → roof steel → secondary items, as in KPwBI. Adapt to the structure (steel roof, flat slab with no beams). Details: `workflows/full-modeling-workflow.md` Phase 3.
 - **Core procedure for every element:** Stage A **types** (find the schedule, catalog every type, create the types, verify them: gate) before Stage B **placement** (instance table with supports, pilot one, batch, verify: gate). `workflows/element-modeling-workflow.md`.
 - **Incremental:** one level or one element family per step; small scripts; verify and log after each step. Never build the whole model in one script.
+- **Clean the table, place once, then audit.** Placing beams exactly where drawn lines start and stop looks right in plan but is wrong in 3D. Clean the planning table first (de-duplicate, add edge/tie beams, resolve ends to supports, flush intent, merge runs, set joints), place once, then audit and repair only what shows in the model (`references/beams.md` B2b, B5b, B6). A floor is done at zero, or at a short list the user accepts.
 - **Probe, then batch.** Place one test element, inspect its geometry/location/parameters, compare to the drawing, only then place the rest.
 - **Families over DirectShape** wherever a suitable family exists; DirectShape only where no family fits (and say so).
 - **After one failure, change method** — read the error, change the call/check/script size, and record the lesson. Never retry an identical approach.
@@ -99,7 +90,7 @@ Current focus: **setup, columns, beams, slabs, foundations, roof (`framing`)**. 
 - "Follow the drawings: if it's drawn, draw it; if it's not drawn, don't." Model drawn offsets exactly ("45 mm off the grid, model it so").
 - **Low quota, high accuracy:** small scripts, short narration, no re-doing finished work ("no need to redo what you've done, focus on finishing it").
 - **Ask with AskUserQuestion**, 2–3 options, recommended option first. The user answers fast, so ask rather than guess.
-- **When the user points** (screenshot circle, "these ones I've selected"): call `get_selected_elements`, then re-read that exact drawing area at high dpi before answering. First guesses were wrong twice in KPwBI.
+- **When the user points** (screenshot circle, "these ones I've selected"): call `get_selected_elements`, then re-read that exact drawing area at high dpi before answering. First guesses were wrong twice in KPwBI. The user's words can name the wrong category ("columns" meant beams on RSUD): trust the selection and the drawing over the wording.
 - "Check the entire model once more for anything suspicious" / "final gloss over" = run the **full** audit (`review`), not a spot check.
 - Families for steel beams and columns; DirectShape only for foundations (company convention) and items with no family.
 - No AI name ("CLAUDE") in view, element or type names. Use project-style names from the start.
@@ -137,6 +128,7 @@ This skill grows only from **tested results**. After any modelling operation tha
 | Tag | Meaning |
 |---|---|
 | `[VERIFIED <source, Revit ver>]` | Executed in THIS setup (local Revit + MCP) and the resulting model inspected. |
+| `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]` | Run in Revit 2026 + `mcp-server-for-revit` on the RSUD Cakung model (2026-11-20..23) and checked by audit script or the user's screenshots (`EXPERIMENTAL` = counts right, 3D not yet inspected). Field report: `assets/field-reports/2026-11-23-rsud-cakung-beam-cleanliness.md`. |
 | `[IMPORTED <source>]` | Taken from an earlier real project (e.g. KPwBI) but NOT re-run here. Use as a hypothesis: test on one element, then promote to `[VERIFIED]`. |
 | `[EXPERIMENTAL]` | Worked once or under narrow conditions; not yet repeated. Use with a check. |
 | `[THEORY]` | Standard knowledge or API documentation; **not tested in this setup**. Verify before relying on it. |

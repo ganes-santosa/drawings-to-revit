@@ -35,4 +35,4 @@ Member counts per letter vs plan; chord/ridge heights; no members at end-on-misr
 | Eave-tip purlins missing | Thin outer lines overlooked | Model them; ask what a user circle means | [IMPORTED KPwBI] |
 
 ## 8. Related
-`beams.md`, `connections.md`, `revit-families.md`.
+`beams.md`, `revit-families.md`.

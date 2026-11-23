@@ -36,4 +36,4 @@ Counts per type vs table; plan positions vs calibrated drawing; cap top/bottom v
 | Pile type miscount | Glyph confusion A/B/C | Cross-check table | [IMPORTED KPwBI] |
 
 ## 8. Related
-`columns.md`, `revit-families.md`, `reinforcement.md`.
+`columns.md`, `revit-families.md`.

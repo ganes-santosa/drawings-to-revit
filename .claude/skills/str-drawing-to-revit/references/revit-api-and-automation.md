@@ -42,6 +42,15 @@ return sb.ToString();
 - A hanging call may be a **modal dialog** in Revit (e.g. floor-overlap warning).
 - `[LIMIT]` Editing family documents through the bridge is not possible (transaction already open).
 
+### Bridge behaviour confirmed on RSUD Cakung `[VERIFIED RSUD, Revit 2026]`
+- **Any modal warning dialog freezes the API and looks exactly like a timeout**, not only the floor-overlap one: also "There are identical instances in the same place" (duplicate placement) and "Can't keep elements joined" (merging/trimming joined beams). The next call times out too. Ask the user to dismiss it (**Unjoin / OK, never Delete**), then **count what committed before retrying**: the change usually did commit.
+- A timed-out script's result can come back as the reply to the *next* call. Do not trust a reply that does not match the script just sent.
+- **Speed:** copy element data (end points, widths) into plain arrays, do the maths, write only changed elements. Nested loops of API calls time out; the array method handled 700 × 700 beams and four floors in one call in under a second.
+- Do not touch elements after deleting them in the same script (`InvalidObject`): collect, delete, then edit.
+- `out` is a C# keyword: not usable as a variable name.
+- LINQ (`.Any(...)`) worked in the host on RSUD.
+- Moving/trimming via `((LocationCurve)el.Location).Curve = Line.CreateBound(a, b)` works at scale.
+
 ## 5. Patterns
 - Small scripts; one concern each; return structured text (id | mark | result).
 - Read-back after every write. Report counts.
@@ -50,7 +59,7 @@ return sb.ToString();
 - Units: API lengths in feet (mm/304.8).
 
 ## 6. Untested capabilities to probe (backlog)
-`Floor.Create` signature on the installed version; `Rebar.CreateFromCurves`; `StructuralConnectionHandler`; view creation (`ViewPlan.Create`, `View3D.CreateIsometric`); schedule creation (`ViewSchedule.CreateSchedule`); `document.GetWarnings()`; DWG/PDF underlay import via `ImportInstance`/`Document.Link` — see live-test plan.
+`Floor.Create` signature on the installed version; view creation (`ViewPlan.Create`, `View3D.CreateIsometric`); schedule creation (`ViewSchedule.CreateSchedule`); `document.GetWarnings()`; DWG/PDF underlay import via `ImportInstance`/`Document.Link` — see live-test plan.
 
 ## 7. Failure cases
 See `troubleshooting.md` (rows tagged "API").

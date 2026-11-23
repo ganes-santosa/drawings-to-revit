@@ -110,4 +110,4 @@ return f.Id.ToString();
 | Wrong thickness | Plan table vs detail differ | Ask; log | [IMPORTED KPwBI] |
 
 ## Related
-`building-logic.md`, `beams.md`, `views-and-documentation.md`, `model-validation.md`.
+`building-logic.md`, `beams.md`, `model-validation.md`.

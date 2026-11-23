@@ -1,14 +1,14 @@
 # str-to-revit
 
-Claude skills for pipeline: structural construction drawings (PDF/DWG) -> Revit model.
+One Claude skill, `str-drawing-to-revit`: structural construction drawings (PDF) -> accurate Revit 2026 structural model.
+Focus: setup (units, levels, grids), columns, beams, slabs, foundations, roof. Start with `AGENTS.md` and `HANDOFF.md`.
 
 ## Layout
 
-- `.claude/skills/<name>/SKILL.md` - one skill per pipeline stage (Claude Code auto-loads)
-- `samples/` - test drawings (git-ignored; keep client files out of repo)
+- `.claude/skills/str-drawing-to-revit/` - the skill (`SKILL.md`, `references/`, `workflows/`, `scripts/`, `assets/`)
+- `samples/` - real drawing sets (git-ignored; keep client files out of the repo)
+- `AGENTS.md`, `CLAUDE.md`, `HANDOFF.md` - working rules and session state
 
-## Pipeline (draft)
+## How it works
 
-1. `drawing-extract` - read sheets, pull grids, levels, member tags, schedules
-2. (next) map extracted data to Revit families/types
-3. (next) generate Revit API / Dynamo / pyRevit script to build model
+`/str-drawing-to-revit <route> <task>`: the route (e.g. `columns`, `beams`, `slabs`) picks the reference files to read; the rest is the task. Each element is built in two stages: **types** (find the schedule, catalog, create, verify), then **placement** (instance table with supports, pilot one, batch, verify).

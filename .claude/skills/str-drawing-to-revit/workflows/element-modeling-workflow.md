@@ -5,7 +5,7 @@ Every element route follows the same three stages, in order. **Do not start plac
 ```
 Stage 0  Scope and prerequisites
 Stage A  TYPES      find the schedule → catalog → map to Revit → create → verify (gate)
-Stage B  PLACEMENT  find the layout → instance table + supports → pilot one → batch → verify (gate)
+Stage B  PLACEMENT  find the layout → instance table + supports → clean the table → pilot one → place once → audit and repair → verify (gate)
 Stage C  CLOSE-OUT  log, learn, report
 ```
 
@@ -82,6 +82,9 @@ Layout plans per level for this element, plus sections/details that give heights
 ### B2. Build the instance table
 One row per instance: mark → catalog type, plan position (grid intersection + dimensioned offsets, or calibrated measurement), level, base/top or top elevation, orientation/rotation, **supports** (what each end or base sits on, `building-logic.md` §3), source sheet, provenance (`EXPLICIT / DERIVED / MEASURED / ASSUMED`). Element-specific columns: each reference §B.
 
+### B2b. Clean the table (beams: required)
+Beams: before placing anything, clean the instance table in fixed order: de-duplicate → add missing edge/tie beams → resolve ends to supports → flush intent → merge continuous runs → set joints → check the table (`beams.md` B2b). Place columns first so the table uses the columns as modelled.
+
 ### B3. Cross-check before placing
 - Counts per mark vs the schedule / plan totals.
 - Every instance's type is in the verified catalog (Stage A).
@@ -97,6 +100,9 @@ Place **one** typical instance. Read back: location (mm), level, offsets, type, 
 - **Supports first:** foundations/columns → primary beams → secondary beams → slabs; roof columns → rafters/trusses → purlins.
 - Every instance gets its Mark and Comments (sheet, drawing mark, provenance, `LOW CONFIDENCE`, `CANTILEVER`).
 - try/catch per instance; return `id | mark | result`.
+
+### B5b. Audit and repair (beams: required)
+Beams: after each floor is placed, audit it and repair only what the audit lists (`beams.md` B5b). If the table was cleaned well (B2b), this pass should find little.
 
 ### B6. Verify the placement — GATE
 1. Connectivity: `scripts/revit/check_connectivity.cs` → 0 unexplained floating ends / unsupported columns.

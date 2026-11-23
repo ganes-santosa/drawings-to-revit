@@ -24,6 +24,14 @@
 | Orphan foundations | Demolished frame included | Ask; check sheet status | foundations | [IMPORTED KPwBI] |
 | Project-doc write refused | Doc not read in full this session | Read in full, edit, write | — (KPwBI doc tool) | [IMPORTED KPwBI] |
 | Beams don't touch columns or each other ("floating") | End points taken from where the drawn line stops; wrong level; support not modelled yet | Support table, ends resolved to supports, connectivity check | building-logic | [THEORY] (user-reported) |
+| Call "times out" while merging/trimming beams | Modal "Can't keep elements joined" dialog | User clicks Unjoin; count what committed, then continue; disallow joins before changing curves | beams B4–B5 | [VERIFIED RSUD] |
+| Call "times out" right after placing beams | Modal "identical instances in the same place" (duplicate rows) | User dismisses (OK, not Delete); de-duplicate the instance table | beams B2 | [VERIFIED RSUD] |
+| Reply does not match the script just sent | Result of the previous timed-out call | Ignore it; re-read the model state | api §4 | [VERIFIED RSUD] |
+| Corner stubs and notches after extending ends | Overshoot: end landed past the target beam's end | Crossing point within target length; joint rules | beams B5b, building-logic §6 | [VERIFIED RSUD] |
+| Column joins missing | DisallowJoinAtEnd applied at every end | AllowJoinAtEnd at column ends | beams | [VERIFIED RSUD] |
+| Perimeter beams stick out past the columns | Beams from plan lines, columns from schedule; flush intent lost | Flush snap (perimeter only) | drawing-interpretation §5 | [VERIFIED RSUD] |
+| Whole floor placed wrong | Sheet shifted vs sister sheets; alignment locked on wrong grid multiple | Constrained per-sheet grid alignment; check one column per sheet | grids-and-levels §5 | [VERIFIED RSUD] |
+| Script timeout on large beam sets | Nested loops of API calls | Arrays first, write only changed elements | api §4 | [VERIFIED RSUD] |
 | Thin outer lines (eave-tip purlins) missing | Modelled main members only; user circled the outline | Thin outer lines are members too; ask what a circle means | structural-framing | [IMPORTED KPwBI] |
 | Secondary beams on the wrong lines | Assumed nearest grid (1A/2A) | Use drawn offsets (1A − 1200, 2A + 600) | beams | [IMPORTED KPwBI] |
 | Slab stubs stick out past the edge | Edges set from grids or beam faces | Redraw from the drawn thick outline | slabs | [IMPORTED KPwBI] |
@@ -33,7 +41,7 @@
 | Slab thickness differs plan vs detail | Took the plan table value | Ask; adopt the answer and lower steel under metal deck | slabs | [IMPORTED KPwBI] |
 | Skill route not found | Row missing/typo | `python scripts/check_skill.py` | SKILL.md §2 | [IMPORTED container] |
 
-## Documentation/view gotchas `[IMPORTED KPwBI]` (full detail: `views-and-documentation.md`)
+## Documentation/view gotchas `[IMPORTED KPwBI]`
 - Structural Plan view type injected 6 filters incl. hidden "Floors - Concrete NOT": remove from working views.
 - Inspection views: plan per level (Coordination discipline, range slab top −1.7 m to +1.2 m), 3D per level with section box, overall 3D; structural categories only, floors 45–55% transparent; filters: LOW CONFIDENCE red, steel blue, concrete grey, slabs by thickness.
 - Sheets, dimensions, tags, schedules: **not yet done** `[OPEN]` — follow project template and ask.

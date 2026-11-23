@@ -2,6 +2,20 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-23 — RSUD Cakung beam field report integrated (unreleased)
+- Archived the structure agent's handover as `assets/field-reports/2026-11-23-rsud-cakung-beam-cleanliness.md`; new evidence tags `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]` in SKILL.md §8.
+- `beams.md` rewritten: B3 continuity (one instance per run; secondaries no longer split), edge beams, flush intent; B4–B5 verified mechanics (justification, offsets, move via LocationCurve, allow/disallow joins, arrays for speed); new **B5b clean-up pipeline** (fixed order) with the joint table; B6 per-floor audit; failure table extended.
+- `building-logic.md`: connected-end definition, extension method, re-scan rule, overshoot bug; joins at column ends allowed.
+- `check_connectivity.cs` rewritten to the RSUD definition (within the other beam's length; ±20 mm column; half-width + 30 mm); not yet run.
+- `drawing-interpretation.md` §5: one-sided / outline-only edge beams + detection, "model it, then tag it", flush intent, column outline vs schedule, de-duplication, user wording vs selection. `grids-and-levels.md`: sheets shift against each other. `revit-api-and-automation.md`: modal dialogs generalised, stale replies, speed, InvalidObject, `out`, LINQ works. `troubleshooting.md`: 8 rows. `model-validation.md`: check #18 beam audit.
+- SKILL.md: "clean up and audit every floor", "model it, then tag it" extended to graphic conventions, user wording vs selection.
+- Open: the RSUD audit/clean-up scripts themselves are not in the repo (only the core snippet); ask for them.
+- Restructured (user decision): the clean-up now runs on the **planning table before placing** (`beams.md` B2b, steps 1–7 incl. a table gate), and B5b became an **audit-and-repair pass** in the model for what only shows there. Workflow, building-logic §6 and SKILL.md aligned. Pre-placement version `[THEORY]` until tested on a floor.
+
+## 2026-11-23 — focus cleanup (unreleased)
+- Removed everything outside the focus: references `structural-walls`, `stairs`, `reinforcement`, `connections`, `views-and-documentation`; their routing rows; the old `drawing-extract` skill; live-test rows for them. Recoverable from git tag `v1.1.0`.
+- README rewritten for the single-skill layout. Added AGENTS.md, CLAUDE.md, HANDOFF.md.
+
 ## 2026-11-20 — v1.1.0 focus, building logic, core procedure
 - Focus narrowed to setup, columns, beams, slabs, foundations, roof (`framing`). Walls, stairs, reinforcement, connections, views moved to "Parked routes" in SKILL.md.
 - New global rule 11 "Nothing floats" + `references/building-logic.md` (load path, valid supports per element, support table, end-point rules, join notes). Loaded by every focus element route and by `review`.
