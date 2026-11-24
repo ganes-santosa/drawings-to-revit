@@ -111,7 +111,9 @@ b.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set("B1 | S-401 p1
 return b.Id.ToString();
 ```
 - The creation call, `Y_JUSTIFICATION = 1` (Center), `Z_JUSTIFICATION = 0` (Top) and top height via `STRUCTURAL_BEAM_END0/1_ELEVATION`: run on ~2,300 beams `[VERIFIED RSUD]` (confirms KPwBI).
-- **Move or trim** a beam: `((LocationCurve)el.Location).Curve = Line.CreateBound(a, b)` `[VERIFIED RSUD]`.
+- **Move or trim** a beam: `((LocationCurve)el.Location).Curve = Line.CreateBound(a, b)` `[VERIFIED RSUD]`. **Warning: setting the curve resets `STRUCTURAL_BEAM_END0/1_ELEVATION` to 0** `[VERIFIED RSUD]` (10 beams dropped 50 mm on RSUD). Read both end offsets *before* the edit and write them back after it.
+- **Curved beams:** `document.Create.NewFamilyInstance(arc, symbol, level, StructuralType.Beam)` with an `Arc` works for a concrete rectangular family `[VERIFIED RSUD]` (3 curved S1 300x600 edge beams). Centreline radius = slab outline radius ± half the beam width (− for a convex corner, + for a concave one). Straight beams running past the arc are trimmed at the arc beam's centreline circle.
+- **"Beam or Brace is slightly off axis"** comes from 2–7 mm endpoint drift: snap the endpoints orthogonal (average the shared coordinate), then restore the end offsets (4 warnings → 0) `[VERIFIED RSUD]`.
 - **Joins:** `StructuralFramingUtils.DisallowJoinAtEnd(b, k)` at ends **not** inside a column; `AllowJoinAtEnd(b, k)` at ends inside a column `[VERIFIED RSUD]`. Disallowing at *every* end is a mistake (RSUD had to re-allow 1,573 column ends). Disallow the join **before** changing the curve, or Revit may raise "Can't keep elements joined" `[EXPERIMENTAL RSUD]`.
 - Sloped members (knee braces): `StructuralType.Beam` with sloped ends, not Brace `[IMPORTED KPwBI]`.
 - Marks `[IMPORTED KPwBI]`: concrete `BLn-W/E/T-nnn`, `BLA-*`, `BLD-*`; steel `BSL1/BSL2/BSM/BSA-nnn` (RSUD used `ST-BM-L01-nnn`). Comments: drawing mark, sheet/page, provenance, `LOW CONFIDENCE`, `CANTILEVER`, and every clean-up action appended.
@@ -124,7 +126,7 @@ Some problems only appear once beams are in Revit: a support the table never had
 
 1. **Audit** (B6): `scripts/revit/check_connectivity.cs` for free ends and column bases, plus overlaps, duplicate marks, beams through a column interior, long spans, LOW CONFIDENCE count.
 2. **Joins:** `AllowJoinAtEnd` at ends inside a column, `DisallowJoinAtEnd` elsewhere; disallow **before** changing any curve, or Revit may raise "Can't keep elements joined" `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]`.
-3. **Repair only the beams the audit lists**, with the same rules as B2b steps 3–6, editing in place: `((LocationCurve)el.Location).Curve = Line.CreateBound(a, b)` `[VERIFIED RSUD]`. Copy end points into arrays, do the maths, write only the changed beams.
+3. **Repair only the beams the audit lists**, with the same rules as B2b steps 3–6 (and write the end offsets back after every curve edit), editing in place: `((LocationCurve)el.Location).Curve = Line.CreateBound(a, b)` `[VERIFIED RSUD]`. Copy end points into arrays, do the maths, write only the changed beams.
 4. **After every geometry change, re-scan** free ends with a ±400 mm search, forward **or** backward (a moved girder left 11 beams 274 mm short on RSUD), then an overlap scan, trimming overlaps to the common point `[VERIFIED RSUD]`.
 5. If a modal dialog appears, the call looks like a timeout: the user dismisses it (Unjoin / OK, never Delete); count what committed before retrying (`revit-api-and-automation.md` §4).
 6. **Re-audit.** The floor is done at zero, or at a short list the user accepts. Show the user the numbers and the list.
@@ -138,6 +140,8 @@ Report per floor `[VERIFIED RSUD]` (script); targets `[EXPERIMENTAL RSUD]`:
 - **Duplicate marks** (target 0);
 - **Beams passing through a column interior** without ending in it (review);
 - **Long unsupported spans** (review);
+- **End offsets ≠ the level standard** (e.g. −50), except drawn steps and upstands: catches beams reset by a curve edit or placed at the wrong level (RSUD: one beam at offset −18000, invisible in plan, "floating" in 3D) `[VERIFIED RSUD]`;
+- **Cantilever (OV/Sov) tips without an edge beam closing the row** (target 0: a free tip means a missing edge beam) `[VERIFIED RSUD]`;
 - **Count of `LOW CONFIDENCE` beams.**
 
 Also:

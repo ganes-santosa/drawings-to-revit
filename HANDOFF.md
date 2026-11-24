@@ -1,6 +1,6 @@
 # HANDOFF — where we left off
 
-Last updated: 2026-11-23 · Repo state: last pushed commit `505d3dc` (local focus cleanup + AGENTS/CLAUDE/HANDOFF not yet committed), tag `v1.1.0` (points one commit earlier, left as is on purpose; the later commit only fixes the version number).
+Last updated: 2026-11-23 · Repo state: last pushed commit `7d21c3f` (slab report integration not yet committed), tag `v1.1.0` (points one commit earlier, left as is on purpose; the later commit only fixes the version number).
 
 ## What exists
 - Skill `str-drawing-to-revit` v1.1.0: orchestrator `SKILL.md` (rules, routing, preferences), 15 reference files, 4 workflows, scripts, templates. Details: `DEVLOG.md`.
@@ -11,11 +11,11 @@ Last updated: 2026-11-23 · Repo state: last pushed commit `505d3dc` (local focu
 - `scripts/find_schedules.py` (shortlists schedule pages in drawing PDFs); tuned on the real sets.
 - `samples/` holds 6 real DED sets: Bandara Hang Nadim, DRC Kalimantan, Hunver OIKN 390B, KPWBI DIY, RSUD Cakung, Tower 4 ITS.
 - `assets/legacy/` keeps the original single-file KPwBI skill verbatim.
-- `assets/field-reports/` holds field reports from real modelling sessions. First one: RSUD Cakung beam clean-up (2026-11-23), now integrated. User decision: the clean-up rules run on the **planning table before placing** (`beams.md` B2b), then an **audit-and-repair pass** in the model (B5b, B6). The pre-placement version is untested: try it on one floor and compare audit numbers with RSUD.
+- `assets/field-reports/` holds field reports from real modelling sessions: RSUD Cakung beam clean-up (2026-11-23) and slab clean-up (2026-11-24, with its scripts), both integrated. `slabs.md` was rewritten from the slab report (edge line = edge-beam outer face; clean outlines before building; 12-check slab audit). User decision: the clean-up rules run on the **planning table before placing** (`beams.md` B2b), then an **audit-and-repair pass** in the model (B5b, B6). The pre-placement version is untested: try it on one floor and compare audit numbers with RSUD.
 
 ## What is proven vs not
 - **Verified here:** the skill syntax (official docs), `find_schedules.py` on real sets (columns found in 4 of 4 sets tested; beams/slabs missed where text is outlined), Revit 2026 + family templates exist on this machine.
-- **Run in Revit on a real project (RSUD Cakung, by another agent):** beam placement mechanics, connected-end rule, free-end extension, merge, joint clean-up, flush snap, per-floor audit `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]`.
+- **Run in Revit on a real project (RSUD Cakung, by another agent):** beam placement mechanics, connected-end rule, free-end extension, merge, joint clean-up, flush snap, per-floor audit; slab outlines, artifact clean-up, edge snapping, arcs, shaft openings, slab audit `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]`.
 - **Never run in Revit:** everything else (columns, slabs, foundations, roof, type creation, and the repo's own scripts, including the rewritten `check_connectivity.cs`). Tagged `[IMPORTED KPwBI]` or `[THEORY]`. Revit was not running; MCP calls failed with "connect to revit client failed".
 
 ## Open items / next steps (in order)
@@ -24,8 +24,9 @@ Last updated: 2026-11-23 · Repo state: last pushed commit `505d3dc` (local focu
 3. Restructure `foundations.md` and `structural-framing.md` (roof) into the types/placement layout of `columns.md`.
 4. Pick one real project (suggest DRC Kalimantan `3.DRC_STRUKTUR.pdf`, 84 pages; columns K1/K2 table on p23, beams p33, slabs p17) and run the full procedure end to end on columns first.
 5. Ask the RSUD agent for its full clean-up and audit scripts (~4k chars each) and store them under `scripts/revit/` after a test run.
-6. Not yet run: `find_schedules.py` on Tower 4 ITS and Bandara Hang Nadim (very large files, slow).
-7. The installed plugin skill `structural-drawings-to-revit` overlaps and may trigger instead of the new skill: ask the user to disable it once the new one is trusted.
+6. Generalise the RSUD slab scripts (`assets/field-reports/2026-11-24-rsud-slab-cleanup-scripts/`) into `scripts/` with paths, level names, joint range and hand-built pieces as inputs; then test on a second project.
+7. Not yet run: `find_schedules.py` on Tower 4 ITS and Bandara Hang Nadim (very large files, slow).
+8. The installed plugin skill `structural-drawings-to-revit` overlaps and may trigger instead of the new skill: ask the user to disable it once the new one is trusted.
 
 ## Decisions the user made (keep)
 - Local development; push only when told. Version tags v1.0.0, v1.1.0 pushed. Leave the v1.1.0 tag as is.

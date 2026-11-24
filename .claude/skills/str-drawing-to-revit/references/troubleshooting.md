@@ -32,6 +32,14 @@
 | Perimeter beams stick out past the columns | Beams from plan lines, columns from schedule; flush intent lost | Flush snap (perimeter only) | drawing-interpretation §5 | [VERIFIED RSUD] |
 | Whole floor placed wrong | Sheet shifted vs sister sheets; alignment locked on wrong grid multiple | Constrained per-sheet grid alignment; check one column per sheet | grids-and-levels §5 | [VERIFIED RSUD] |
 | Script timeout on large beam sets | Nested loops of API calls | Arrays first, write only changed elements | api §4 | [VERIFIED RSUD] |
+| Beams dropped 50 mm / one beam at ground level after edits | Setting `LocationCurve.Curve` reset the end offsets to 0 | Read offsets before, write back after every curve edit; audit offsets per level | beams B4–B5 | [VERIFIED RSUD] |
+| Beam faces stick out of the slab side along façades | Slab edges from the slab sheet, beams from the beam sheet (30–190 mm apart) | Slab edge = edge-beam outer face | slabs B2a.2 | [VERIFIED RSUD] |
+| Jagged slab edges / "extrusion profiles" | Outlines traced from a raster | Cell grid of real face lines | slabs B2b.1 | [VERIFIED RSUD] |
+| Slab corners notched, stepped, sliver strips, small holes | Loop artifacts | Artifact table with guards | slabs B2b.2 | [VERIFIED RSUD] |
+| Beam sticks out into empty space | Panel cut away, edge beam missing, phantom beam, or wrong height | Classify first (four causes) | slabs B5b | [VERIFIED RSUD] |
+| Modal "circular chain of references" | Hosted floor openings | Shaft openings | slabs B4–B5 | [VERIFIED RSUD] |
+| "Insufficient memory", whole call rolled back | Several levels rebuilt in one call | One level per call | api §4 | [VERIFIED RSUD] |
+| Same problem keeps coming back over several rounds | Only the user's selected instances were fixed | Treat the selection as a class; scan every level | slabs B5b, SKILL §4 | [VERIFIED RSUD] |
 | Thin outer lines (eave-tip purlins) missing | Modelled main members only; user circled the outline | Thin outer lines are members too; ask what a circle means | structural-framing | [IMPORTED KPwBI] |
 | Secondary beams on the wrong lines | Assumed nearest grid (1A/2A) | Use drawn offsets (1A − 1200, 2A + 600) | beams | [IMPORTED KPwBI] |
 | Slab stubs stick out past the edge | Edges set from grids or beam faces | Redraw from the drawn thick outline | slabs | [IMPORTED KPwBI] |

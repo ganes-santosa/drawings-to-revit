@@ -80,6 +80,13 @@ Sheet-title words: `Denah` = plan, `Potongan` = section, `Detail`, `Eksisting` =
 - **The plan's column outline can disagree with the column schedule/plan** (≈185 mm on RSUD, outline not even square). The schedule wins for the column; beams drawn relative to that outline keep their *relationship*, not their absolute coordinates `[VERIFIED RSUD]`.
 - **The same beam detected twice** (duplicate rows) raises Revit's "identical instances" dialog: de-duplicate the instance table by type + collinear + overlapping before placing `[VERIFIED RSUD]`.
 - **The user's words can name the wrong category** ("columns like these should sit flush" meant *beams*, RSUD). Resolve from the selection (`get_selected_elements`) and the drawing geometry, not the wording.
+- **Curved outlines (true arcs)** `[VERIFIED RSUD]`:
+  - Curved outline pieces come as pdfplumber `curve` objects whose `path` contains `('c', p1, p2, p3)` Bézier segments, at the outline line weight (0.71 pt on RSUD).
+  - A quarter circle has its two control points on the tangent lines. For `m P0 c P1 P2 P3` with P1 straight below or beside P0, the centre is the corner of the control polygon opposite the arc: (x of P3, y of P0) or the reverse. Radius = |P0 − centre| in pt, then convert with the sheet calibration.
+  - Convex or concave: the beam's inner face line (dashed, offset by the beam width) lies on the slab side. If it is farther from the centre than the outline, the slab is outside the circle (concave corner).
+  - Calibration is anisotropic (x and y scales differ ~2 %), so a converted circle becomes an ellipse: use one round radius and place the centre so the arc is tangent to both straight edges in model coordinates.
+  - **Look at the outline objects themselves before concluding "no curves".** The first RSUD scan said none, because it classed the terrace arcs as drop-off kerbs from their location.
+- **A "none found" scan is not an answer** for something the user asked about: check the raw objects in the area they meant first.
 - **When the user points** (circles a screenshot / "these ones I selected"): `get_selected_elements` if available, then re-read that exact area at high dpi. First guesses were wrong twice.
 
 ## 6. Dimension inference hierarchy

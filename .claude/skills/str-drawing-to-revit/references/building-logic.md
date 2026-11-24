@@ -26,7 +26,7 @@ Never leave it silently. Decide which of the three it is, fix or flag it, and lo
 | Secondary beam | a primary beam, column or wall | drawn cantilever |
 | Column (base) | foundation (cap/footing), column below, transfer beam, wall | none without asking |
 | Column (top) | beam, slab or roof member framing into it | top storey column ending at roof beam |
-| Slab | beams or walls along its edges, or columns (flat slab) | drawn cantilever edge, void edge, joint face |
+| Slab | beams or walls along its edges, or columns (flat slab). **Where an edge beam runs along an edge, the slab edge is that beam's outer face** in the model `[VERIFIED RSUD]` (`slabs.md` B2a.2) | drawn cantilever edge, void edge, joint face |
 | Pile cap / footing | piles / ground, with a column or wall on top | none: a cap with nothing on it is an orphan (ask) |
 | Rafter / truss | column, wall, ring beam or roof beam at both supports | drawn overhang (eave) |
 | Purlin | rafters / trusses at every crossing | end overhang past the last rafter, if drawn |
@@ -72,7 +72,7 @@ The drawing gives the beam's **line** (its plan position). The **ends** come fro
 - (a) it lies inside a column footprint (bounding box ± 20 mm) at the beam's height; or
 - (b) it lies on another beam: within that beam's half-width + 30 mm of its centreline, **and between that beam's two ends**.
 
-Only cantilever tips may be free (Comments `CANTILEVER`; RSUD drawings tag them OV / Sov "overstek"). Every other free end is fixed or listed for the user.
+Only cantilever tips may be free (Comments `CANTILEVER`; RSUD drawings tag them OV / Sov "overstek"), **and only if an edge beam closes the row of tips**: a row of cantilevers with free tips means the edge beam is missing, and the panel behind it will also be missing its slab `[VERIFIED RSUD]`. Every other free end is fixed or listed for the user.
 
 **Fixing free ends** (extension method) `[VERIFIED RSUD]`, thresholds `[EXPERIMENTAL RSUD]`. Apply it to the planning table before placing (`beams.md` B2b step 3), and again to any free end the in-model audit finds (`beams.md` B5b):
 1. Look forward along the beam's own direction from the free end.

@@ -49,7 +49,15 @@ return sb.ToString();
 - Do not touch elements after deleting them in the same script (`InvalidObject`): collect, delete, then edit.
 - `out` is a C# keyword: not usable as a variable name.
 - LINQ (`.Any(...)`) worked in the host on RSUD.
-- Moving/trimming via `((LocationCurve)el.Location).Curve = Line.CreateBound(a, b)` works at scale.
+- Moving/trimming via `((LocationCurve)el.Location).Curve = Line.CreateBound(a, b)` works at scale, **but resets the beam's `STRUCTURAL_BEAM_END0/1_ELEVATION` to 0**: read the offsets first and write them back.
+
+### Bridge behaviour confirmed on RSUD slabs (2026-11-24) `[VERIFIED RSUD, Revit 2026]`
+- **One level per call** for heavy rebuilds: several levels in one call raised "insufficient memory" and rolled back everything.
+- After an exception, edits made **before** the error stayed committed (seen after an InvalidObject from iterating a cached list after `Delete`). Delete last or re-collect, then read back what committed.
+- An exception in the **reporting** part of a script (e.g. reading warnings) rolled back the whole call, modelling included. Keep reporting in a separate read-only call.
+- Computed values such as `HOST_AREA_COMPUTED` read 0 until `document.Regenerate()`.
+- **File hand-off:** Python writes geometry to a text file, C# reads it with `File.ReadAllLines`. Keeps each script under ~4 kB whatever the element count.
+- Hosted floor openings raised the modal "There is a circular chain of references"; shaft openings (`NewOpening(baseLevel, topLevel, CurveArray)`) did not.
 
 ## 5. Patterns
 - Small scripts; one concern each; return structured text (id | mark | result).

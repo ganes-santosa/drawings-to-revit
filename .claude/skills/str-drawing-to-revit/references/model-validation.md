@@ -24,6 +24,8 @@ The check catalogue used by `workflows/quality-control-workflow.md`. Prefer numb
 | 14 | Family/type vs schedule | type dims vs schedule | exact | [THEORY] |
 | 15 | Level/grid read-back | elevations & endpoints vs tables | ≤0.5 mm | [THEORY] |
 | 17 | **Connectivity (nothing floats)** | `scripts/revit/check_connectivity.cs`: connected-end rule (column bbox ±20 mm, or on another beam within half-width + 30 mm and between its ends); column bases on foundation/column/beam/wall; `CANTILEVER` excluded | 0 unexplained | rule [VERIFIED RSUD]; this script [THEORY] |
+| 19 | **Slab audit per level** | the 12 checks in `slabs.md` B6 (warnings, overlap, corner steps, U-caps/slivers, empty holes, short edges, beams outside slab, beam faces past slab edge, free ends / OV tips, framed panels without slab, beam end offsets, edge beam vs outline) | 0 / user-accepted list | checks [VERIFIED RSUD]; thresholds [EXPERIMENTAL RSUD]; scripts RSUD-specific |
+| 20 | **Beam end offsets** | read back STRUCTURAL_BEAM_END0/1_ELEVATION of every beam; ≠ level standard except drawn steps/upstands | 0 | [VERIFIED RSUD] |
 | 18 | **Beam audit per floor** | free ends (cantilever tips vs others, listed), collinear overlaps > 50 mm, duplicate marks, beams through a column interior, long unsupported spans, LOW CONFIDENCE count (`beams.md` B6) | 0 / user-accepted list | audit [VERIFIED RSUD]; thresholds [EXPERIMENTAL RSUD]; script not in repo yet |
 | 16 | Orphans | elements without Mark or on wrong level | 0 | [THEORY] |
 

@@ -94,6 +94,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 - "Check the entire model once more for anything suspicious" / "final gloss over" = run the **full** audit (`review`), not a spot check.
 - Families for steel beams and columns; DirectShape only for foundations (company convention) and items with no family.
 - No AI name ("CLAUDE") in view, element or type names. Use project-style names from the start.
+- **Fix the class, not the instance.** The user selects a few examples; treat them as a class, scan every level for it, report how many were found and fixed (RSUD slabs took five rounds because only selections were fixed). Mechanical artifacts: just fix them. Drawing questions: list what the sheet says, let the user decide.
 - End every task with a short report: the outcome plus one next step.
 
 ## 5. Ambiguity and conflict handling
@@ -128,7 +129,7 @@ This skill grows only from **tested results**. After any modelling operation tha
 | Tag | Meaning |
 |---|---|
 | `[VERIFIED <source, Revit ver>]` | Executed in THIS setup (local Revit + MCP) and the resulting model inspected. |
-| `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]` | Run in Revit 2026 + `mcp-server-for-revit` on the RSUD Cakung model (2026-11-20..23) and checked by audit script or the user's screenshots (`EXPERIMENTAL` = counts right, 3D not yet inspected). Field report: `assets/field-reports/2026-11-23-rsud-cakung-beam-cleanliness.md`. |
+| `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]` | Run in Revit 2026 + `mcp-server-for-revit` on the RSUD Cakung model (2026-11-20..23) and checked by audit script or the user's screenshots (`EXPERIMENTAL` = counts right, 3D not yet inspected). Field reports: `assets/field-reports/` (beams 2026-11-23, slabs 2026-11-24). |
 | `[IMPORTED <source>]` | Taken from an earlier real project (e.g. KPwBI) but NOT re-run here. Use as a hypothesis: test on one element, then promote to `[VERIFIED]`. |
 | `[EXPERIMENTAL]` | Worked once or under narrow conditions; not yet repeated. Use with a check. |
 | `[THEORY]` | Standard knowledge or API documentation; **not tested in this setup**. Verify before relying on it. |

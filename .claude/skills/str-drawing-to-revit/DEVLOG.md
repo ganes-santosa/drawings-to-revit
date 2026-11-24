@@ -2,6 +2,14 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-24 — RSUD Cakung slab field report integrated (unreleased)
+- Archived `assets/field-reports/2026-11-24-rsud-cakung-slab-cleanliness.md` and its scripts (`2026-11-24-rsud-slab-cleanup-scripts/`, verbatim, RSUD-specific, notes appended to its README).
+- `slabs.md` rewritten in the beam layout: big lesson (internal consistency), A3 piece kinds B/S/D, A4–A5 copy-and-SetLayers, B2 vector outline file + beam CSV, B2a rules (**extent = outline polygon; edge line = edge-beam outer face**, replacing the old B3 rule 1), B2b clean before building (cell grid from real lines, artifact table + guards, snap, clean again, pre-build audit), B4–B5 (file hand-off, arcs, shaft openings, one level per call, hand-built pieces, Regenerate), B5b audit and repair (four causes of protruding beams, ripple to dak, fix the class), B6 12-check slab audit.
+- `beams.md`: curve edit resets end offsets (write back), curved beams, off-axis warning fix, audit adds end offsets and OV tips without edge beam.
+- `building-logic.md`: slab edge = edge-beam outer face; cantilever row needs an edge beam.
+- `drawing-interpretation.md`: Bézier arc detection and centre rule; "none found" is not an answer.
+- `revit-api-and-automation.md`, `troubleshooting.md` (8 rows), `model-validation.md` (#19 slab audit, #20 end offsets), workflow B2b/B5b for slabs, SKILL.md "fix the class, not the instance".
+
 ## 2026-11-23 — RSUD Cakung beam field report integrated (unreleased)
 - Archived the structure agent's handover as `assets/field-reports/2026-11-23-rsud-cakung-beam-cleanliness.md`; new evidence tags `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]` in SKILL.md §8.
 - `beams.md` rewritten: B3 continuity (one instance per run; secondaries no longer split), edge beams, flush intent; B4–B5 verified mechanics (justification, offsets, move via LocationCurve, allow/disallow joins, arrays for speed); new **B5b clean-up pipeline** (fixed order) with the joint table; B6 per-floor audit; failure table extended.
