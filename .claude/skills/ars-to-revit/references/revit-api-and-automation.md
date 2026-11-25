@@ -1,7 +1,7 @@
 # Revit API and automation — probing, the MCP bridge, limits
 
 > Legend: `[VERIFIED src]` `[IMPORTED KPwBI-ARS]` `[IMPORTED STR]` `[EXPERIMENTAL]` `[THEORY]` `[LIMIT]` `[OPEN]` (SKILL.md §8).
-> Last reviewed: 2026-11-24
+> Last reviewed: 2026-11-25
 
 ## 1. Environment record (local Windows 11 machine)
 - Revit 2026 (build 26.5.10.38) with `mcp-server-for-revit`; tools named `mcp__mcp-server-for-revit__<tool>` (load schemas with ToolSearch `select:<name>`) `[VERIFIED 2026-11-24]`.
@@ -37,12 +37,14 @@ return sb.ToString();
 - **Modal dialogs freeze the API and look like timeouts:** floors/walls overlapping, "Can't keep elements joined", "identical instances in the same place", "Can't make cut-out", say_hello. Ask the user to dismiss (Unjoin/OK, never Delete), then count what committed `[IMPORTED KPwBI-ARS]` `[IMPORTED STR]`.
 - Replies can come back out of step (a reply carrying the previous call's result): re-query when a result looks wrong `[IMPORTED KPwBI-ARS]` `[IMPORTED STR]`.
 - Compiler quirks: avoid `?.` chains and null `.AsString()`; `int[]` literals may fail (use `double[]`/`long[]`); prefer `Func<>` over local functions; `ElementId.Value` and `new ElementId(long)` in 2026; some BuiltInParameters absent in 2026 (guard); no `WallType.CrossSection`; `out` is a keyword `[IMPORTED KPwBI-ARS]` `[IMPORTED STR]`.
+- **Silent failure handling** `[VERIFIED 2026-11-25]`: subscribe `app.FailuresProcessing += h` (lambda: delete warnings; on errors `e.SetProcessingResult(FailureProcessingResult.ProceedWithRollBack)`), unsubscribe in `finally`. The commit then returns `RolledBack` instead of a modal dialog. It does **not** catch failures raised immediately inside `FamilyManager.Set` in a family document.
+- **Timeouts are not always hangs:** a long call (dozens of commits) exceeds the bridge timeout while Revit keeps working; the next call times out too. Keep calls short; log progress to a text file inside long loops `[VERIFIED 2026-11-25]`.
 - Persist between calls: `AppDomain.CurrentDomain.SetData/GetData` (while Revit stays open) `[IMPORTED KPwBI-ARS]`.
 - One concern per script: create types → set parameters → place, in separate calls `[IMPORTED KPwBI-ARS]`.
 - **One level per call** for heavy work (several levels raised "insufficient memory" and rolled back) `[IMPORTED STR]`. Keep reporting in a separate read-only call (an exception in reporting rolled back the modelling) `[IMPORTED STR]`.
 - Speed: copy element data into arrays, compute, write only changed elements `[IMPORTED STR]`. File hand-off: Python writes geometry to a text file, C# reads it with `File.ReadAllLines` `[IMPORTED STR]`.
 - Do not touch elements after deleting them in the same script (`InvalidObject`) `[IMPORTED STR]`.
-- **Family documents:** `EditFamily` fails inside the tool transaction; use `Application.OpenDocumentFile` / `NewFamilyDocument` + own Transaction, SaveAs, Close; delete `.0001.rfa` backups `[IMPORTED KPwBI-ARS]`. (The STR skill recorded family editing as impossible: `[CONTESTED]` between the two projects; test.)
+- **Family documents:** `EditFamily` fails inside the tool transaction; use `Application.OpenDocumentFile` / `NewFamilyDocument` + own Transaction, SaveAs, Close; delete `.0001.rfa` backups `[IMPORTED KPwBI-ARS]`; **confirmed here: new family from template, reopen, edit, save, load, all from `send_code_to_revit` `[VERIFIED 2026-11-25]`** (the STR skill's "impossible" note was about `EditFamily` inside the tool transaction). `LoadFamily(path, out fam)` returns the family and its symbol ids in the same call `[VERIFIED 2026-11-25]`.
 
 ## 5. Visual check `[IMPORTED KPwBI-ARS]`
 Duplicate a 3D view (`CHK <AREA> 3D`, no AI names), crop box not section box, hide levels/grids; `ViewOrientation3D(eye, up, forward)` with up ⟂ forward; `ImageExportOptions` (PixelSize 4000, FitToPage) to a folder; compare with the elevation/render.

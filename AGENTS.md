@@ -40,7 +40,7 @@ Read `HANDOFF.md` first (where we left off), then the `SKILL.md` of the skill yo
 ## Environment (checked 2026-11-20 / 2026-11-24)
 - Windows 11, Revit 2026 (26.5.10.38) with the MCP add-in; tools `mcp__mcp-server-for-revit__*` fail with "connect to revit client failed" until Revit is open with the add-in running.
 - Python with PyMuPDF (`import pymupdf`); pdfplumber not installed (needed by `pdf_calibrate.py`); `pdftoppm` not on PATH (render with PyMuPDF).
-- Revit family templates: `C:\ProgramData\Autodesk\Revit Steel Connections 2026\en-UK\Family Templates\` (Metric Structural Column.rft, Metric Structural Framing - Beams and Braces.rft). No door/window templates and no standard content library found.
+- Revit family templates: full Revit 2026 set (incl. `Metric Window.rft`, `Metric Door.rft`) in `D:\ProgramData\Autodesk\RVT 2026\Family Templates\English\` (found 2026-11-25); structural ones also in `C:\ProgramData\Autodesk\Revit Steel Connections 2026\en-UK\Family Templates\`. Family folder: `families\` in the repo (git-ignored).
 - The working directory sometimes jumps into a skill folder: use absolute paths. Python edits with backslashes in strings can mangle paths (`\a` became a bell character once): check with grep after editing.
 
 ## Layout

@@ -1,7 +1,7 @@
 # Walls — wall types (layers) and walls, joins, closing into rooms (OST_Walls)
 
 > Legend: `[VERIFIED src]` `[IMPORTED KPwBI-ARS]` `[IMPORTED STR]` `[EXPERIMENTAL]` `[THEORY]` `[LIMIT]` `[OPEN]` (SKILL.md §8).
-> Last reviewed: 2026-11-24 · Revit tested: none yet in this skill.
+> Last reviewed: 2026-11-25 (A1–A3 from the KPwBI sheets) · Revit tested: none yet in this skill.
 > Order of work: `workflows/element-modeling-workflow.md`. Hosting, joins, enclosure, heights: `building-logic.md`. Layers, materials, names: `types-and-materials.md`.
 
 ## 1. Scope
@@ -11,17 +11,27 @@ Basic (layered) walls: interior and exterior, partitions, parapets. Not here: cu
 
 ## A. Types
 ### A1. Where the types are
-- **Wall-type plan / legend** (`TIPE DINDING`, `wall type`, `legenda dinding`): KPwBI A-4201..4207, found by `find_schedules.py --element walls` `[VERIFIED 2026-11-24]`. Contents not yet read `[OPEN]`.
-- **Sections and 1:20/1:50 details** for build-ups (plaster, brick/hebel, gypsum on studs); **finish plans** (`FINISHING DINDING`, KPwBI A-41xx) and the finish schedule for faces.
+The wall type is spread over **four places**; no single sheet has it all `[VERIFIED 2026-11-25, samples KPwBI]`:
+1. **Wall-type plans** (`TIPE DINDING`, KPwBI A-4201..4207, 1:400): a small `WALL TYPE LEGEND` / `LEGEND TIPE DINDING` box with a triangle code and a name only (A = dinding beton, B = dinding bata ringan, C = dinding hebel tahan api). **No thickness, no layers.** Legend and tags are real text (`get_text`), so they can be counted, but single letters collide with grid bubbles A–P.
+2. **Standard details** (`STANDAR DETAIL PEKERJAAN DINDING …`, A-7009 / A-7010, 1:20 and 1:5; text outlined, read visually): block size (bata ringan 600×200×100), plaster 15 / 15 ("TEBAL DINDING SINGLE" + 15 each side), gypsum partition 12+76+12 = 100, marble / homogeneous-tile cladding build-ups, frameless glass partition.
+3. **Partial plans 1:50** (A-5xxx): the only place wall **thicknesses are dimensioned** (130 and 150 for block walls, 250/280/350 for the concrete lift core).
+4. **Finish plans** (`FINISHING DINDING`, A-4101..4107): face finishes by triangle code W1… with a `WALL FINISHING LEGEND` (text); legends differ per building.
+- `find_schedules.py --element walls` finds the wall-type plans `[VERIFIED 2026-11-24]`; it does **not** find the standard details or partial plans that carry the numbers: look those up in the sheet map (`--sheets`, titles `STANDAR DETAIL`, `PARSIAL`).
 - Specs (RKS) only to name a material, never for a dimension the drawings omit.
-- No legend: thickness from the plan's line pair (calibrated) → `MEASURED`, LOW.
+- No dimension anywhere: thickness from the plan's line pair (calibrated) → `MEASURED`, LOW.
 
 ### A2. Extract per type
-code (DN-01, W1 …) · description · total thickness · layers in order (material, mm, function) · exterior/interior finish codes · fire rating/notes · source sheet/page · provenance.
+code (A, B, C / DN-01 …) · description · total thickness (and where it was dimensioned) · layers in order (material, mm, function) · finish codes per face (from the finish plan) · fire rating · source sheet/page per value · provenance.
 
-### A3. Catalog notes
-- One Revit type per unique build-up (+ finishes if finishes are layers). The drawing code goes in Type Mark and the type name.
-- Plan line pairs that do not match any legend thickness → conflict row, ask.
+### A3. Catalog notes and traps `[VERIFIED 2026-11-25, samples KPwBI]`
+- One Revit type per unique build-up (+ finishes if finishes are layers). The drawing code goes in Type Mark and the type name; **split a legend code by thickness** when the plans dimension more than one (KPwBI B → B-130 and B-150).
+- **Legend names a material, not a build-up.** Total = detail layers added up (100 + 15 + 15 = 130 → `DERIVED`), confirmed by a plan dimension (`EXPLICIT`). A thickness with no detail (150) keeps its layers `LOW`.
+- **Same code, different words per building:** GU legend B = "bata ringan", GP legend B = "hebel" (a brand of the same block). Note it; do not make two types unless the thickness differs.
+- **Codes with no thickness anywhere** (KPwBI C, fire-rated hebel): catalog as `blocked` and ask; never borrow a thickness from a nearby wall.
+- **Detail-only walls** (gypsum partition, glass partition) have no legend code: where they go is unknown until a plan draws them.
+- **Finish codes are not all layers:** paint (W1–W4, W18) has no thickness; corner guard, guide rails (W10, W11A–C) and plinths (F2, F14 = floor codes reused) are accessories. Only tile/stone/panel finishes could become layers, and their thickness is not on the finish legend (only on details).
+- **Finish legends differ by building:** codes used on one building's plans can be missing from its own legend (KPwBI GP uses W17; only the GU legend defines it): RFI.
+- Plan line pairs that do not match any thickness → conflict row, ask.
 
 ### A4–A5. Make the types
 - Duplicate a Basic wall type, then set layers/material in the next call (`types-and-materials.md` §2–3) `[IMPORTED KPwBI-ARS]`.

@@ -1,6 +1,6 @@
 # HANDOFF — where we left off
 
-Last updated: 2026-11-25 · Repo state: this repo, now named **drawings-to-revit**, holds **two skills** (STR and ARS) plus `shared/` and `tools/`. The move-in of `ars-to-revit` and the shared folder are committed and pushed. Tag `v1.1.0` (STR, points one commit before its version fix, left as is on purpose).
+Last updated: 2026-11-25 (ARS: KPwBI catalogs, core door/window families) · Repo state: this repo, now named **drawings-to-revit**, holds **two skills** (STR and ARS) plus `shared/` and `tools/`. The move-in of `ars-to-revit` and the shared folder are committed and pushed. Tag `v1.1.0` (STR, points one commit before its version fix, left as is on purpose).
 - Git remote `origin` = `https://github.com/ganes-santosa/drawings-to-revit.git` (GitHub repo renamed from `str-to-revit` on 2026-11-25; the old address redirects).
 - Local folder: rename `D:\Outpost\Coding\str-to-revit` → `D:\Outpost\Coding\drawings-to-revit` is pending; it was blocked while a session had it open. The old `ars-to-revit` folder's `samples` junction points at the old path.
 
@@ -45,17 +45,27 @@ Last updated: 2026-11-25 · Repo state: this repo, now named **drawings-to-revit
 - **Focus:** setup, walls, floors, ceilings, roofs, `openings-create` (door/window families from the schedule), `openings-place` (placement), `openings` = both in order.
 - Legacy KPwBI architectural skill archived byte-identical + item map (`assets/legacy/README.md`); content tagged `[IMPORTED KPwBI-ARS]`.
 
+### KPwBI catalogs (2026-11-25, no Revit)
+- Outputs in `samples\DED KPWBI DIY\_log\` (git-ignored): `project-log.md` (common + architecture sections; levels/grids/coordinates not set up), `kpwbi-wall-types.csv` (A, B-130, B-150, C blocked, 2 detail-only partitions, 19 finish codes), `kpwbi-door-window-types.csv` (24 doors D42–D65, 42 window-sheet codes, schedule qty next to keyplan count), `rfi-log.md` (19 items).
+- Skill: `walls.md` and `openings-families.md` A1–A3 rewritten from the real sheets; `drawing-interpretation.md` §2–3.
+
+### Door/window families (2026-11-25, Revit 2026 scratch project)
+- **Supported set (user decision: fewer, reliable):** `families\Windows\KPW_Window.rfa` (1–6 equal columns, optional top/bottom light) and `families\Doors\KPW_Door.rfa` (1/2 leaves, optional transom, vision panel, louvre). One type per drawing code. Scripts `scripts/revit/family_window_core.cs`, `family_door_core.cs`; rules in `openings-families.md` A5d.
+- Verified: window 40 locks / flex 8/8; door 47 locks / flex 8/8 / committed sweep 101 of 120 (rest not run, bridge timeouts); 7 KPwBI types (AW04, AW18, AW21, D46, D47, D52, D55) placed in a test wall: sizes, sills, cuts, bounding boxes exact, 0 warnings.
+- **Edge cases are improvised at run time** (right opening/sill/host/cut, marked `IMPROVISED` + LOW, logged); 14 known edge cases from DRC / Tower 4 / Bandara / Hunver in A5c, to be supported later.
+- Superseded: pilot `KPW_Window-Fixed-2Pane.rfa` and its script (kept for the record). The scratch project in Revit is unsaved.
+
 ### What is proven vs not
-- **Verified:** skill syntax; `check_skill.py` (negative test catches all planted faults); `find_schedules.py` on KPwBI (all 26 door/window schedule pages ranked first; titles from title blocks; wall-type, finish and ceiling plans found); RSUD and Hunver architecture have outlined text; no door/window family templates on this machine; `say_hello` times out on its modal dialog.
-- **Never run:** every Revit procedure (`[IMPORTED KPwBI-ARS]` or `[THEORY]`), `pdf_calibrate.py` (pdfplumber missing).
+- **Verified:** skill syntax; `check_skill.py`; `find_schedules.py` on KPwBI; family creation from templates, type creation and door/window placement with cut checks (above); `say_hello` blocks on its modal dialog.
+- **Never run:** walls, floors, ceilings, roofs in Revit; `pdf_calibrate.py` (pdfplumber missing).
 
 ### Next steps (in order)
-1. **First real task (no Revit needed):** read the KPwBI wall-type legend (Part2 A-4201..4207) and door/window schedules (Part4 A-8101..8126) visually; build the wall and opening type catalogs; refine `walls.md` A1–A3 and `openings-families.md` A1–A3.
-2. Same on a second set (Tower 4 ITS architecture or Bandara 02 ARC); tune `find_schedules.py` (edit in `shared/`).
-3. **Revit pilots** on a scratch model the user opens for this work (not a shared model): probe, one wall type + wall, one door + window (cut check), one floor, one ceiling, one roof.
-4. Ask the user for `Metric Window.rft` / `Metric Door.rft` (or their template folder) and a family folder.
-5. Decisions still open (ask when the first task needs them): finishes as wall layers vs separate walls; finish floors vs combined floors vs STR copy; width/height basis in schedules.
-6. Install pdfplumber (ask) or port `pdf_calibrate.py` to PyMuPDF (in `shared/`, benefits both skills).
+1. Decisions waiting on the user: finishes as wall layers vs separate walls; B-150 / C thickness (RFI-W01/W02); lobby glazing (D57/D58/D60), GP partitions, AW29 as curtain walls?; screens K01/J01/J02 parked?
+2. Support the next edge cases one at a time (A5c), each with the same build → flex → place → check cycle; run the remaining door sweep cases in short calls.
+3. Add an "Improvised door/window types" line to `shared/assets/examples/project-log-template.md` once the other session's edits there are committed.
+4. KPwBI: read sills/heights from elevations and sections (RFI-W10, RFI-D05) and the floor/ceiling finish plans; then a second set (Tower 4 ITS or Bandara).
+5. **Revit pilots** for walls, floors, ceilings, roofs on a scratch model the user opens for this work.
+6. Install pdfplumber (ask) or port `pdf_calibrate.py` to PyMuPDF (in `shared/`).
 7. Write and test `scripts/revit/check_building_logic.cs` (inserts hosted/cutting/within length, wall gaps, floors outside walls).
 8. The installed plugin skill `architectural-drawings-to-revit` overlaps: ask the user to disable it once `ars-to-revit` is trusted.
 

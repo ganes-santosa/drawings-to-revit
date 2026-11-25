@@ -11,7 +11,7 @@ How to read an architectural DED set: which sheet answers which question, how to
 |---|---|
 | Denah (plan, 1:100–1:400) | wall lines (pairs of parallel vector lines; centre and thickness from the pair), openings, grids, level marks, door/window tags |
 | Tipe dinding (wall-type plan) | which wall type sits where (KPwBI A-42xx) |
-| Finishing lantai / dinding / plafond plans | floor finish, wall finish and ceiling type + height per room (KPwBI A-40xx, A-41xx, A-43xx) `[VERIFIED 2026-11-24 titles found by script; contents not yet read]` |
+| Finishing lantai / dinding / plafond plans | floor finish, wall finish and ceiling type + height per room (KPwBI A-40xx, A-41xx, A-43xx) `[VERIFIED 2026-11-24 titles found by script]`; KPwBI wall-finish legends (W1… codes) are real text and pair with their codes by position `[VERIFIED 2026-11-25, samples]` |
 | Tampak (elevation) | window/door x positions (overlay check), sill/head heights, bands, top levels, finish legend codes |
 | Potongan (section) | floor-to-floor, roof pitch per direction (can differ by direction: 34.9° vs 29.4° on one KPwBI building), eave/fascia heights, ceiling heights |
 | Parsial / detail 1:50, 1:20 | exact depths, steps, wall build-ups, frame sections (read at 300 dpi) |
@@ -29,7 +29,8 @@ How to read an architectural DED set: which sheet answers which question, how to
   - **RSUD Cakung ARSITEKTUR** (79 single-page PDFs): titles are outlined; only dimension numbers and some sheet numbers (`AR.1301`) are text; 39 pages have no text at all. Use the file names (`AR 3100.pdf`) and look visually.
   - **Hunver OIKN 390B** architectural album (34 p): no text on any page. Visual only.
 - The script is a shortlist, never the answer. Open the top pages (render 200–300 dpi) and confirm. If nothing is found, read the drawing index (`DAFTAR GAMBAR`) visually or **ask the user to point to the sheet**.
-- Text *inside* drawings is often split into glyphs: `pdftotext -bbox` (or PyMuPDF `get_text("words")`) and pair a code word ("AW", "D", "P") with the nearest number to locate tags `[IMPORTED KPwBI-ARS]`.
+- **Rotated pages** (KPwBI Part3 standard details carry `/Rotate 270`): a PyMuPDF `clip` rectangle taken from the displayed page lands in the wrong place. Render the whole page once and crop the image `[VERIFIED 2026-11-25, samples]`.
+- Text *inside* drawings is often split into glyphs: `pdftotext -bbox` (or PyMuPDF `get_text("words")`) and pair a code word ("AW", "D", "P") with the nearest number to locate tags `[IMPORTED KPwBI-ARS]`. On the KPwBI keyplans each tag is a letter line with a number line just below it (bboxes overlap by ~1.5 pt): pairing letter → number with |dx| < 4 pt and −3 < dy < 5 pt, deduplicated by position, gave per-code counts for 11 of 12 keyplan sheets `[VERIFIED 2026-11-25, samples]`.
 - Build a page map per PDF once and keep it in the project log.
 
 ## 4. Calibration and measuring

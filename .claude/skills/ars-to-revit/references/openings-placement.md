@@ -27,13 +27,13 @@ mark (`DR-<code>-<lvl>-nn` / `W-<code>-<lvl>-nn`) · code → type · plan point
 - Codes in the drawing but not in the schedule → own type, LOW `[IMPORTED KPwBI-ARS]`.
 
 ## B4. Pilot one, check it in the next call
-- Place one instance, then in a **separate later call** check it still exists, `FindInserts` lists it, host volume dropped, sill and position read back. Revit deleted doors at commit with "Can't make type" while the script said OK `[IMPORTED KPwBI-ARS]`.
+- Place one instance, then in a **separate later call** check it still exists, `FindInserts` lists it, host volume dropped, sill and position read back. Revit deleted doors at commit with "Can't make type" while the script said OK `[IMPORTED KPwBI-ARS]`. **Never create or edit types and place their instances in the same call:** windows placed that way stayed uncut (not in `FindInserts`, wall volume unchanged); re-placed in a new call they cut `[VERIFIED 2026-11-25, scratch model]`.
 - **Open problem:** on 100 mm Generic walls (KPwBI Lantai Dasar) every door type vanished at commit (masonry frame depth 150/100/80 tried); the same families worked on 150/250/300 walls and a storefront `[OPEN]`. Test one door on each thin wall type before batching.
 
 ## B5. Place once `[IMPORTED KPwBI-ARS]`
 1. **Never load/reload families and place in the same call.**
 2. `doc.Create.NewFamilyInstance(pt, symbol, wall, level, StructuralType.NonStructural)`.
-3. Set `INSTANCE_SILL_HEIGHT_PARAM` (windows).
+3. Set `INSTANCE_SILL_HEIGHT_PARAM` (windows) **every time**: placing with a point at level z gives sill 0 and ignores the type's Default Sill Height; copy it from the type (or the drawing) right after placing `[VERIFIED 2026-11-25, scratch model]`.
 4. `doc.Regenerate()`, **then** `flipFacing()` if `FacingOrientation · wall.Orientation < 0` (or per the drawing), then `Regenerate()` again. Flipping before Regenerate leaves units uncut.
 5. First placement after a load sometimes fails: delete and re-place.
 6. Mark + Comments; per-instance try/catch; return `mark | id | result`; one level per call.
