@@ -5,6 +5,7 @@
 - Levels: name | FFL | SFL by zone | source · Height chain (slab top → beam top → column base → cap top)
 - Grids: name | position | source · Calibration residuals per sheet
 - Conventions: Mark patterns · type names · comments format
+- **Modelling decisions (asked once at setup):** beam segmentation A continuous / B split at supports / C continuous within zones (+ zone lines) · slab segmentation · column stacks · date and who decided
 - Element tables / counts: category | modelled | expected | notes
 - Coordinates of non-obvious elements (off-grid, eccentric, joint strips)
 - Truss geometry record: support y, ridge, heel z, chord centreline z, panel points, diagonal direction, sizes per member type

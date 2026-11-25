@@ -1,6 +1,6 @@
 # HANDOFF — where we left off
 
-Last updated: 2026-11-23 · Repo state: last pushed commit `7d21c3f` (slab report integration not yet committed), tag `v1.1.0` (points one commit earlier, left as is on purpose; the later commit only fixes the version number).
+Last updated: 2026-11-25 · Repo state: all work committed and pushed to `main` (slab report + beam segmentation decision, both unreleased since v1.1.0), tag `v1.1.0` (points one commit earlier, left as is on purpose; the later commit only fixes the version number).
 
 ## What exists
 - Skill `str-drawing-to-revit` v1.1.0: orchestrator `SKILL.md` (rules, routing, preferences), 15 reference files, 4 workflows, scripts, templates. Details: `DEVLOG.md`.
@@ -33,6 +33,7 @@ Last updated: 2026-11-23 · Repo state: last pushed commit `7d21c3f` (slab repor
 - Focus: setup, columns, beams, slabs, foundations, roof. "Essentials first, they have to work well."
 - Core procedure is theirs: types first (find table, catalog, create by duplicating if possible, else family from scratch into a family folder, verify), then place.
 - Building logic: no beam ever floats.
+- Beam segmentation is a per-project choice asked at setup (continuous / split at supports / continuous within zones), for 4D zoning. Recommend split at supports when unsure (2026-11-24).
 - Keep git identity `bimpc004` (repo-local).
 
 ## Gotchas learned this session

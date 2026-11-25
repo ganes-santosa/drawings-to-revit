@@ -19,6 +19,9 @@ Setup (units, levels, grids), **columns, beams, slabs, foundations, roof (`frami
 8. Update `HANDOFF.md` at the end of every working session.
 9. Commit messages end with the co-author line given by the session's attribution reminder. Git identity is set per repo (author `bimpc004`); do not change global git config.
 
+## Project decisions
+Beam segmentation (and slab/column segmentation) is chosen **per project** at setup and recorded in the project log; never assume continuous or split (`references/project-setup.md` §3 step 5b).
+
 ## Environment (checked 2026-11-20)
 - Windows 11, Revit 2026 installed; the Revit MCP tools (`mcp__mcp-server-for-revit__*`) fail with "connect to revit client failed" until Revit is open with the MCP add-in running. Run `say_hello` first.
 - Python available (`python`); PyMuPDF installed (`import pymupdf`); pdfplumber not installed; `pdftoppm` not on PATH.

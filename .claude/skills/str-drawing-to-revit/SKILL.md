@@ -94,6 +94,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 - "Check the entire model once more for anything suspicious" / "final gloss over" = run the **full** audit (`review`), not a spot check.
 - Families for steel beams and columns; DirectShape only for foundations (company convention) and items with no family.
 - No AI name ("CLAUDE") in view, element or type names. Use project-style names from the start.
+- **Ask the project modelling decisions once at setup** (`references/project-setup.md` §3 step 5b): beam segmentation (continuous / split at supports / continuous within zones; recommend split at supports when 4D phasing is possible or unknown, since merging later is easy and splitting later is not). Record in the project log; elements follow it.
 - **Fix the class, not the instance.** The user selects a few examples; treat them as a class, scan every level for it, report how many were found and fixed (RSUD slabs took five rounds because only selections were fixed). Mechanical artifacts: just fix them. Drawing questions: list what the sheet says, let the user decide.
 - End every task with a short report: the outcome plus one next step.
 

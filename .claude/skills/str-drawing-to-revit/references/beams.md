@@ -64,7 +64,11 @@ Then clean it (B2b) before anything is placed.
 5. **Elevation:** top = SFL of the slab it supports, unless drawn otherwise. Steel under a metal-deck slab: top = SFL − slab thickness `[IMPORTED KPwBI]`.
 6. **Steps:** ≤ 400 mm → boundary beam takes the higher SFL; large steps (1.7–2.1 m) → boundary beam at the lower level + step walls `[IMPORTED KPwBI]` (a convention: confirm with the user).
 7. **Joints:** nothing crosses a dilatation joint; beams stop at it `[IMPORTED KPwBI]`.
-8. **Continuity: one instance per continuous run,** secondaries included. This **replaces** the old KPwBI habit of keeping secondaries split where they frame into girders: the user said split pieces "provide no benefit" `[VERIFIED RSUD]`. Different types on one line stay separate (an OV2 cantilever continuing a B3).
+8. **Segmentation follows the project decision** (asked once at setup, `project-setup.md` §3 step 5b; read it from the project log; if missing, ask before placing):
+   - **A. Continuous:** one instance per continuous run of the same type, secondaries included. On RSUD the user chose this ("split pieces provide no benefit") `[VERIFIED RSUD]`.
+   - **B. Split at supports:** one instance per span. Primary beams break at every column (both ends inside the column footprint); secondaries break at the girder or column they frame into (ends on the girder centreline). Default when 4D/phasing is likely or unknown `[THEORY]` (not yet run).
+   - **C. Continuous within zones:** as A inside each zone, split where a run crosses a zone line the team supplied `[THEORY]`.
+   - Every mode: split at dilatation joints and where the type changes (an OV2 cantilever continuing a B3).
 
 ### B2b. Clean the planning table before placing
 Do the geometry on the table (plain data), not on beams already in Revit. Placing clean data once avoids the modal dialogs ("identical instances", "Can't keep elements joined"), the chain reactions (a moved girder stranding the beams that frame into it) and the wasted work (RSUD placed ~2,330 beams and merged them down to 904).
@@ -78,7 +82,12 @@ Do the geometry on the table (plain data), not on beams already in Revit. Placin
 2. **Add missing edge and tie beams:** one-sided and outline-only edge beams (`drawing-interpretation.md` §5), and tie beams across rows of cantilever tips where the slab edge runs across them. Tag `LOW CONFIDENCE` (a general tie-beam rule is `[THEORY]`: model and flag, or ask).
 3. **Resolve every end to a support** (`building-logic.md` §6): look forward along the beam axis for the nearest column (the line passes through its footprint) or roughly perpendicular crossing beam (|cos| ≤ 0.5, crossing point *within* that beam's length); cap 4 m; if moved > 1.5 m, note `LOW CONFIDENCE: end extended N mm to nearest support (connectivity rule)`. An end that will not resolve usually means a missing support: go back to step 2.
 4. **Flush intent:** façade/edge beams drawn flush with the columns' outer face get their outer face on the **modelled** column face (`drawing-interpretation.md` §5). Perimeter only; move 8–320 mm only; group the collinear run and use the outermost face; note `flush with outer column face (N mm)`. Then repeat step 3 for beams that framed into a moved beam.
-5. **Merge continuous runs:** same type, same level and top height (±10 mm), both ends within 10 mm of the same line, touching or overlapping (gap ≤ 50 mm) → one row. Keep the lowest Mark, note `merged continuous from 001,002,...`, inherit `LOW CONFIDENCE`. **Never merge across a dilatation joint.** Different types on one line stay separate.
+5. **Apply the segmentation mode** (B2a.8). First merge collinear pieces into runs, always: same type, same level and top height (±10 mm), both ends within 10 mm of the same line, touching or overlapping (gap ≤ 50 mm). This also removes accidental fragments from detection `[VERIFIED RSUD]`. Then:
+   - **A:** keep the runs. Keep the lowest Mark, note `merged continuous from 001,002,...`, inherit `LOW CONFIDENCE`.
+   - **B:** cut each run at every support along it: at column centres (cut point = the beam line's nearest point to the column centre; both new ends sit inside the column) and, for secondaries, at the centrelines of girders they frame into. Pieces inherit type, offsets, `LOW CONFIDENCE` and the source comment; Marks get a span suffix (`-S1`, `-S2` …) `[THEORY]`.
+   - **C:** keep the runs, then cut where a run crosses a zone line. Note the zone in each piece's Comments (e.g. `ZONE Z2`) `[THEORY]`.
+   - Never merge across a dilatation joint. Different types on one line stay separate.
+   Cutting *after* merging gives clean, predictable span pieces (no leftover fragments from where drawn lines happened to stop).
 6. **Set the joints:**
 
    | Joint | How to recognise it | Where the end goes |
@@ -138,7 +147,8 @@ Report per floor `[VERIFIED RSUD]` (script); targets `[EXPERIMENTAL RSUD]`:
 - **Free ends**, split into cantilever tips (allowed) and others (list with mark and coordinates; target 0 or a list the user accepts);
 - **Collinear overlaps > 50 mm** (target 0);
 - **Duplicate marks** (target 0);
-- **Beams passing through a column interior** without ending in it (review);
+- **Beams passing through a column interior** without ending in it: mode B target 0; modes A/C expected at supports, review the rest;
+- **Segmentation matches the project decision:** mode B, every beam ends at a support or cantilever tip; mode C, no beam crosses a zone line; every mode, no beam crosses a dilatation joint;
 - **Long unsupported spans** (review);
 - **End offsets ≠ the level standard** (e.g. −50), except drawn steps and upstands: catches beams reset by a curve edit or placed at the wrong level (RSUD: one beam at offset −18000, invisible in plan, "floating" in 3D) `[VERIFIED RSUD]`;
 - **Cantilever (OV/Sov) tips without an edge beam closing the row** (target 0: a free tip means a missing edge beam) `[VERIFIED RSUD]`;
@@ -164,7 +174,8 @@ RSUD final numbers for reference: duplicate marks 0, overlaps 0, non-cantilever 
 | Secondaries strung along a girder fall short after a move | Girder moved by the flush snap | Re-scan ±400 mm after every geometry change | [VERIFIED RSUD] |
 | Overlaps of exactly 2 × half-width | Crossing classified as an L-corner | Check for a collinear continuation first; trim to common point | [VERIFIED RSUD] |
 | Flush snap moved interior beams | Snapped every eccentric beam (55 + 9 conflicts on one floor) | Perimeter-only test, run-grouped (15 on that floor) | [VERIFIED RSUD] |
-| Girders chopped into a dozen pieces | Placement cut at every column and crossing | Merge continuous runs (441 runs, 2,330 → 904 instances) | [VERIFIED RSUD] |
+| Girders chopped into irregular pieces | Placement cut wherever drawn lines stopped or crossed | Merge into runs first (441 runs, 2,330 → 904 on RSUD), then apply the segmentation mode | [VERIFIED RSUD] (merge) |
+| Project later needs 4D zones but beams are continuous | Segmentation not asked at setup | Ask at setup (mode B when unsure); to convert later, cut runs at supports as in B2b step 5 B, restore offsets after every curve edit | [THEORY] |
 | Column joins missing everywhere | DisallowJoinAtEnd applied at every end | AllowJoinAtEnd at column ends | [VERIFIED RSUD] |
 | Beams notched/trimmed strangely | Auto-join to unrelated members | DisallowJoinAtEnd at non-column ends | [IMPORTED KPwBI] |
 | Beams crossing a dilatation joint | Modelled grid-to-grid | Stop at the joint; add joint beams; never merge across | [IMPORTED KPwBI] |

@@ -15,6 +15,7 @@ Stage C  CLOSE-OUT  log, learn, report
 1. **Scope** from the task text: which element, levels, zones, marks. Confirm existing / demolished / new status of the sheets involved.
 2. **Prerequisites exist in Revit:** levels, grids, units and the coordinate conversion (else run `setup`). Run `say_hello`; if Revit is not connected, stop and tell the user.
 3. **Read** the element reference and `references/building-logic.md`.
+4. **Read the project modelling decisions** from the project log (beam segmentation, slab segmentation, column stacks). If they are missing, ask them now (`project-setup.md` §3 step 5b) before Stage B.
 
 ---
 
@@ -85,7 +86,7 @@ One row per instance: mark → catalog type, plan position (grid intersection + 
 ### B2b. Clean the table (beams and slabs: required)
 Slabs: generate outlines from real face lines, clean loop artifacts, snap edges to edge-beam faces, clean again, pre-build audit (`slabs.md` B2b). Build beams first.
 
-Beams: before placing anything, clean the instance table in fixed order: de-duplicate → add missing edge/tie beams → resolve ends to supports → flush intent → merge continuous runs → set joints → check the table (`beams.md` B2b). Place columns first so the table uses the columns as modelled.
+Beams: before placing anything, clean the instance table in fixed order: de-duplicate → add missing edge/tie beams → resolve ends to supports → flush intent → merge runs then apply the segmentation mode → set joints → check the table (`beams.md` B2b). Place columns first so the table uses the columns as modelled.
 
 ### B3. Cross-check before placing
 - Counts per mark vs the schedule / plan totals.

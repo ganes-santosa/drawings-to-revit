@@ -2,6 +2,11 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-24 — beam segmentation becomes a project decision (unreleased)
+- User requirement: decide per project whether beams are continuous or split (4D / Navisworks TimeLiner zones need pieces that do not cross zones).
+- `project-setup.md` §3 step 5b: ask once at setup (A continuous, B split at supports, C continuous within zones); recommend B when 4D is possible or unknown (merge later = scripted, split later = rework); slab segmentation and column stacks asked in the same round. Recorded in the project log (template updated).
+- `beams.md` B2a.8 and B2b step 5: merge into runs always, then apply the mode (cut at supports / zone lines); audit checks segmentation; RSUD continuity rule kept as mode A. Workflow Stage 0 reads the decisions; SKILL.md preference added.
+
 ## 2026-11-24 — RSUD Cakung slab field report integrated (unreleased)
 - Archived `assets/field-reports/2026-11-24-rsud-cakung-slab-cleanliness.md` and its scripts (`2026-11-24-rsud-slab-cleanup-scripts/`, verbatim, RSUD-specific, notes appended to its README).
 - `slabs.md` rewritten in the beam layout: big lesson (internal consistency), A3 piece kinds B/S/D, A4–A5 copy-and-SetLayers, B2 vector outline file + beam CSV, B2a rules (**extent = outline polygon; edge line = edge-beam outer face**, replacing the old B3 rule 1), B2b clean before building (cell grid from real lines, artifact table + guards, snap, clean again, pre-build audit), B4–B5 (file hand-off, arcs, shaft openings, one level per call, hand-built pieces, Regenerate), B5b audit and repair (four causes of protruding beams, ripple to dak, fix the class), B6 12-check slab audit.

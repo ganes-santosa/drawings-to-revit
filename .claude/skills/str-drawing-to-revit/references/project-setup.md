@@ -14,6 +14,18 @@ Drawing units & scale (from Phase 1); whether the Revit file already exists, and
 3. **Single plan coordinate system for all logs:** state it explicitly, e.g. "x = mm east of grid A, y = mm south of first grid row". `[IMPORTED KPwBI]` Revit internal conversion in that job was `X = x − 217837`, `Y = 172339 − y` (axis flip), ft = mm/304.8. *Write your own conversion and its axis flip in the log; never reuse these numbers.*
 4. **Decide the Revit origin strategy**: model near internal origin, or at shared coordinates; do not move project base/survey points without asking. `[THEORY]`
 5. **Naming and marks.** Propose a scheme and get confirmation. Pattern that worked `[IMPORTED KPwBI]`: Mark `K-<grid>/<row>-S<n>` (columns), `BL<n>-W|E|T-nnn` (beams), `PC-<type>-<grid>` (pile caps), `TB-<type>-x/y` (bored piles). Comments: source sheet, drawing tag/type, provenance, `LOW CONFIDENCE` where applicable.
+5b. **Ask the project modelling decisions once, before any element is modelled,** and record the answers in the project log. Re-ask only if the user changes their mind.
+   - **Beam segmentation** (user requirement 2026-11-24). Ask with AskUserQuestion:
+
+     | Mode | What it means | Good for |
+     |---|---|---|
+     | **B. Split at supports** *(recommend when 4D/phasing or per-bay quantities are likely, or unknown)* | one instance per span: primary beams break at every column, secondaries at the girder or column they frame into | 4D scheduling (Navisworks TimeLiner), construction zones decided later, per-bay quantities |
+     | **A. Continuous** | one instance per continuous run of the same type | clean coordination / visualisation models with no phasing |
+     | **C. Continuous within zones** | continuous inside each construction zone, split at zone boundaries the team supplies (gridlines, pour breaks) | 4D where the zones are already known |
+
+     Why B is the default when unsure: merging split beams into runs later is a scripted, proven step (`beams.md` B2b step 5, RSUD); splitting continuous beams later means re-creating beams and redoing joins and offsets. Split is the reversible choice.
+     In every mode: always split at dilatation joints and where the type changes.
+   - Ask in the same question round if the project may need it: **slab segmentation** (one slab per bay or zone vs one per level piece) and **column stacks** (per storey is the default, `columns.md` B3.1). Same reasoning: 4D zones need pieces that do not cross zone lines.
 6. **Create the project log** from `assets/examples/project-log-template.md` (inputs, conversion, levels, conflicts, assumptions, not-modelled list, counts). Update after every step.
 7. **Do not put the AI's name in view or element names** (user preference `[IMPORTED KPwBI]`). Use project-style names from the start.
 
