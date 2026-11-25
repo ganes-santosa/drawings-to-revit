@@ -78,6 +78,16 @@ Column layout plan per level (marks at grid intersections; dimensioned offsets f
 4. **Top:** the top of the slab/beam at the top of the stack (column must reach the beam soffit at least: building-logic §4.3).
 5. **Orientation:** from the schedule sketch. If undrawn, assume b along X and log it `[IMPORTED KPwBI]`.
 
+### B3b. Clean the table before placing `[THEORY]`
+Same idea as `beams.md` B2b, in this order:
+1. **De-duplicate:** one column per position per storey (plans of several sheets and the schedule list the same column; same position within 50 mm and same storey → one row).
+2. **Size from the schedule, position from the plan:** the schedule wins over the plan outline (`drawing-interpretation.md` §5). Keep the drawn centre unless the plan dimensions it differently.
+3. **Stacks:** per the project decision (default per storey). Each stack's base = the top of the one below, no gaps or overlaps; the type may change only at a stack boundary.
+4. **Plan alignment of stacks:** an upper column sits on the same centre as the one below unless an offset is drawn. Undrawn shifts > 20 mm → check the sheets, keep the drawn position, list it.
+5. **Base support:** every bottom stack has a cap/footing/wall/beam below (support table). A column on a beam (transfer) is listed for the user.
+6. **Top:** reaches the beam soffit or slab top above (building-logic §4.3). A column with nothing on top (roof posts, canopy) is a drawn free top, noted in Comments.
+7. **Gate:** 0 duplicate positions, 0 stack gaps, every base support filled, every type in the catalog.
+
 ### B4–B5. Revit procedure
 ```csharp
 // [THEORY] one column; ids and values from the instance table
@@ -97,7 +107,11 @@ return c.Id.ToString();
 - Rotation: `ElementTransformUtils.RotateElement(document, c.Id, Line.CreateBound(p, p + XYZ.BasisZ), angleRad)` `[THEORY]`.
 - Mark pattern `K-<grid>/<row>-S<n>` `[IMPORTED KPwBI]`; Comments: drawing mark, sheet/page, provenance, `LOW CONFIDENCE`.
 - Place columns **before** the beams that frame into them.
+- **Re-runnable:** skip rows whose Mark already exists on the level (`revit-api-and-automation.md` §5); after a timeout, re-run the same batch.
 - MCP alternative: `create_point_based_element` with the type id; check that it creates a *structural* column with the right base/top before using it for a batch `[OPEN]`.
+
+### B5b. Audit and repair after placing `[THEORY]`
+After each level, run read-only: `scripts/revit/find_duplicates.cs` (placed twice, marks), `scripts/revit/audit_columns.cs` (stack gaps/overlaps, stack shifts, free tops), `scripts/revit/check_connectivity.cs` (bases without support; beams reporting `column top below beam soffit`). Repair only what is listed; if a column moves or changes height, re-check what rests on it (`building-logic.md` §7). Done at zero, or a short list the user accepts.
 
 ### B6. Verification
 - Count per mark × level vs the schedule/plan.
@@ -112,7 +126,9 @@ return c.Id.ToString();
 | Columns floating above the foundation | Base level undefined | Base rule (B3.3), flag LOW CONFIDENCE | [IMPORTED KPwBI] |
 | Wrong orientation | b/h assumed | Check the schedule sketch; ask | [IMPORTED KPwBI] |
 | Extra posts beside columns | Misread an end-on section label | Trace leaders (drawing-interpretation §5) | [IMPORTED KPwBI] |
-| Column too short for the beam | Top set to level, beam deeper / higher | Top = slab/beam top; height chain | [THEORY] |
+| Column too short for the beam | Top set to level, beam deeper / higher | Top = slab/beam top; height chain; connectivity reports `column top below beam soffit` | [THEORY] |
+| Two columns in one place | Batch re-run after a timeout, or the same column from two sheets | Skip existing Marks; de-duplicate the table (B3b.1); `find_duplicates.cs` | [THEORY] |
+| Gap or step between storeys | Stack base not set to the top below | Stack rule (B3b.3); `audit_columns.cs` | [THEORY] |
 
 ## Related
 `building-logic.md`, `foundations.md`, `beams.md`, `revit-families.md`, `model-validation.md`.

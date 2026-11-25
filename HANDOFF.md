@@ -1,12 +1,13 @@
 # HANDOFF — where we left off
 
-Last updated: 2026-11-25 · Repo state: all work committed and pushed to `main` (slab report + beam segmentation decision, both unreleased since v1.1.0), tag `v1.1.0` (points one commit earlier, left as is on purpose; the later commit only fixes the version number).
+Last updated: 2026-11-25 · Repo state: all work committed and pushed to `main` (slab report, beam segmentation decision, review fixes, roof framing; all unreleased since v1.1.0), tag `v1.1.0` (points one commit earlier, left as is on purpose; the later commit only fixes the version number).
 
 ## What exists
 - Skill `str-drawing-to-revit` v1.1.0: orchestrator `SKILL.md` (rules, routing, preferences), 15 reference files, 4 workflows, scripts, templates. Details: `DEVLOG.md`.
-- Routes: `full, analyze, setup, grids, columns, beams, slabs, foundations, framing (roof), families, api, review, troubleshoot, learn, help`. Removed to stay focused (2026-11-23): walls, stairs, reinforcement, connections, views files and routes, and the old `drawing-extract` skill; all recoverable from tag `v1.1.0`.
+- Routes: `full, analyze, setup, grids, columns, beams, slabs, foundations, roof (alias framing), families, api, review, troubleshoot, learn, help`. Removed to stay focused (2026-11-23): walls, stairs, reinforcement, connections, views files and routes, and the old `drawing-extract` skill; all recoverable from tag `v1.1.0`.
 - Core element procedure (`workflows/element-modeling-workflow.md`): Stage A types (find schedule → extract → catalog → map → create → verify gate) → Stage B placement (instance table + supports → pilot → batch → verify gate) → Stage C close-out.
-- "Nothing floats" rule + `references/building-logic.md` + `scripts/revit/check_connectivity.cs`.
+- "Nothing floats" rule + `references/building-logic.md` (incl. §7 changes ripple) + read-only Revit scripts `scripts/revit/check_connectivity.cs` (height-aware since 2026-11-25), `find_duplicates.cs`, `audit_columns.cs`, `audit_roof.cs`.
+- Review fixes 2026-11-25: re-runnable batches (skip existing Marks), SKILL rule 5 allows only rule-based snaps, offsets audited per SFL zone, columns get clean table (B3b) + audit (B5b), project log folder `<drawing set folder>\_log\`.
 - `columns.md`, `beams.md`, `slabs.md` are rewritten in the types/placement layout.
 - `scripts/find_schedules.py` (shortlists schedule pages in drawing PDFs); tuned on the real sets.
 - `samples/` holds 6 real DED sets: Bandara Hang Nadim, DRC Kalimantan, Hunver OIKN 390B, KPWBI DIY, RSUD Cakung, Tower 4 ITS.
@@ -16,12 +17,12 @@ Last updated: 2026-11-25 · Repo state: all work committed and pushed to `main` 
 ## What is proven vs not
 - **Verified here:** the skill syntax (official docs), `find_schedules.py` on real sets (columns found in 4 of 4 sets tested; beams/slabs missed where text is outlined), Revit 2026 + family templates exist on this machine.
 - **Run in Revit on a real project (RSUD Cakung, by another agent):** beam placement mechanics, connected-end rule, free-end extension, merge, joint clean-up, flush snap, per-floor audit; slab outlines, artifact clean-up, edge snapping, arcs, shaft openings, slab audit `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]`.
-- **Never run in Revit:** everything else (columns, slabs, foundations, roof, type creation, and the repo's own scripts, including the rewritten `check_connectivity.cs`). Tagged `[IMPORTED KPwBI]` or `[THEORY]`. Revit was not running; MCP calls failed with "connect to revit client failed".
+- **Never run in Revit:** everything else (columns, slabs, foundations, roof, type creation, and the repo's own scripts: `check_connectivity.cs`, `find_duplicates.cs`, `audit_columns.cs`). Tagged `[IMPORTED KPwBI]` or `[THEORY]`. Revit was not running; MCP calls failed with "connect to revit client failed".
 
 ## Open items / next steps (in order)
 1. **Live tests in Revit** (needs the user to open Revit with a scratch project and start the MCP add-in): `assets/examples/live-test-plan.md` tests 1–6 first (connection, units, levels/grids, family inventory, type duplication, one beam with justification). Promote or fix tags with evidence.
-2. Run `check_connectivity.cs` on a test model; add the missing check (column top below a framing beam).
-3. Restructure `foundations.md` and `structural-framing.md` (roof) into the types/placement layout of `columns.md`.
+2. Run the three read-only scripts (`check_connectivity.cs`, `find_duplicates.cs`, `audit_columns.cs`) on a test model; plant a few faults (beam on another floor, short column, doubled column) and check they are reported.
+3. Restructure `foundations.md` into the types/placement layout of `columns.md`. (Roof done 2026-11-25: `roof-framing.md`, untested in Revit; first live test: one KPwBI GPNJ truss, p50-51, then `audit_roof.cs`.)
 4. Pick one real project (suggest DRC Kalimantan `3.DRC_STRUKTUR.pdf`, 84 pages; columns K1/K2 table on p23, beams p33, slabs p17) and run the full procedure end to end on columns first.
 5. Ask the RSUD agent for its full clean-up and audit scripts (~4k chars each) and store them under `scripts/revit/` after a test run.
 6. Generalise the RSUD slab scripts (`assets/field-reports/2026-11-24-rsud-slab-cleanup-scripts/`) into `scripts/` with paths, level names, joint range and hand-built pieces as inputs; then test on a second project.
@@ -34,6 +35,7 @@ Last updated: 2026-11-25 · Repo state: all work committed and pushed to `main` 
 - Core procedure is theirs: types first (find table, catalog, create by duplicating if possible, else family from scratch into a family folder, verify), then place.
 - Building logic: no beam ever floats.
 - Beam segmentation is a per-project choice asked at setup (continuous / split at supports / continuous within zones), for 4D zoning. Recommend split at supports when unsure (2026-11-24).
+- Project logs live in `<drawing set folder>\_log\` (samples: `samples\<project>\_log\`, git-ignored).
 - Keep git identity `bimpc004` (repo-local).
 
 ## Gotchas learned this session

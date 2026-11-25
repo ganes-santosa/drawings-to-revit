@@ -13,7 +13,7 @@ Grid names & spacings (explicit dimensions, not scaled), level names & elevation
 
 ## 4. Interpretation method
 - Build a grid table: name, direction, position (mm, from dimension string), source sheet. Cross-check cumulative dimensions against overall dimensions.
-- Build a level table: name, FFL, SFL per zone, source. Record datum shifts between sheet groups (verify one known level per group).
+- Build a level table: name, FFL, SFL per zone with each zone's plan extent (polygon or grid range), source. Audits compare beam and slab offsets to the zone, not to one value per floor. Record datum shifts between sheet groups (verify one known level per group).
 - Elements derive elevation from **level + offset**; keep SFL per zone in the log `[IMPORTED KPwBI]`.
 
 ## 5. PDF-to-model calibration `[IMPORTED KPwBI]` method · script `[IMPORTED container 2026-11-20]`

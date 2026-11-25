@@ -19,7 +19,7 @@
 | Everything shifted vs PDF | Global scale | Piecewise calibration | grids-and-levels §5 | [IMPORTED KPwBI] |
 | Elements missing from view | Template filters | Remove filters | slabs / documentation | [IMPORTED KPwBI] |
 | Member count/height impossible | Misread end-on section | Trace leaders | drawing-interpretation §5 | [IMPORTED KPwBI] |
-| Wrong profile on extension | Missed profile letter | Read letter on every segment | structural-framing | [IMPORTED KPwBI] |
+| Wrong profile on extension | Missed profile letter | Read letter on every segment | roof-framing | [IMPORTED KPwBI] |
 | Elements cross a joint | Grid-to-grid modelling | Find joints first | beams | [IMPORTED KPwBI] |
 | Orphan foundations | Demolished frame included | Ask; check sheet status | foundations | [IMPORTED KPwBI] |
 | Project-doc write refused | Doc not read in full this session | Read in full, edit, write | — (KPwBI doc tool) | [IMPORTED KPwBI] |
@@ -40,7 +40,7 @@
 | Modal "circular chain of references" | Hosted floor openings | Shaft openings | slabs B4–B5 | [VERIFIED RSUD] |
 | "Insufficient memory", whole call rolled back | Several levels rebuilt in one call | One level per call | api §4 | [VERIFIED RSUD] |
 | Same problem keeps coming back over several rounds | Only the user's selected instances were fixed | Treat the selection as a class; scan every level | slabs B5b, SKILL §4 | [VERIFIED RSUD] |
-| Thin outer lines (eave-tip purlins) missing | Modelled main members only; user circled the outline | Thin outer lines are members too; ask what a circle means | structural-framing | [IMPORTED KPwBI] |
+| Thin outer lines (eave-tip purlins) missing | Modelled main members only; user circled the outline | Thin outer lines are members too; ask what a circle means | roof-framing | [IMPORTED KPwBI] |
 | Secondary beams on the wrong lines | Assumed nearest grid (1A/2A) | Use drawn offsets (1A − 1200, 2A + 600) | beams | [IMPORTED KPwBI] |
 | Slab stubs stick out past the edge | Edges set from grids or beam faces | Redraw from the drawn thick outline | slabs | [IMPORTED KPwBI] |
 | "Bracing" in a void cell | X pattern read as bracing | Line width 2.0 + legend = void marking | drawing-interpretation §5 | [IMPORTED KPwBI] |
@@ -53,3 +53,8 @@
 - Structural Plan view type injected 6 filters incl. hidden "Floors - Concrete NOT": remove from working views.
 - Inspection views: plan per level (Coordination discipline, range slab top −1.7 m to +1.2 m), 3D per level with section box, overall 3D; structural categories only, floors 45–55% transparent; filters: LOW CONFIDENCE red, steel blue, concrete grey, slabs by thickness.
 - Sheets, dimensions, tags, schedules: **not yet done** `[OPEN]` — follow project template and ask.
+| Elements doubled after re-running a batch | Script placed every row again | Skip existing Marks; `find_duplicates.cs` | api §5 | [THEORY] |
+| Connectivity passes but a beam floats in 3D | Old check ignored height (beam on another floor counted) | Use the 2026-11-25 script (height test) | building-logic §6 | [THEORY] |
+| Audit flags many correct beam offsets | Floor has several SFL zones, compared to one standard | Compare to the zone's SFL (level table with zone extents) | beams B6 | [THEORY] |
+| Roof sheets not found by `find_schedules.py` | Text outlined on roof sheets | Drawing index, visual search, or ask the user | roof-framing §1.1 | [VERIFIED 2026-11-25, samples] |
+| Purlin count wrong per slope | Spacing applied in plan, not along the slope | Spacing along the slope (plan = s × cos θ) | roof-framing B3.7 | [THEORY] |

@@ -21,8 +21,9 @@ ELEMENT = {
     "slabs": ["pelat", "plat", "slab", "s1", "s2", "deck", "tebal", "thickness"],
     "foundations": ["pondasi", "fondasi", "foundation", "footing", "pile", "tiang",
                     "pile cap", "poer", "bor pile", "strauss"],
-    "roof": ["atap", "roof", "rangka", "truss", "kuda-kuda", "gording", "purlin",
-             "rafter", "wf", "cnp", "profil"],
+    "roof": ["atap", "roof", "rangka", "truss", "kuda-kuda", "gording", "gordeng", "purlin",
+             "rafter", "wf", "cnp", "profil", "trekstang", "trekstank", "trecstang", "sagrod",
+             "ikatan angin", "kanopi", "canopy", "baja ringan", "hb", "2l", "lc"],
 }
 
 
@@ -52,12 +53,15 @@ def page_texts(pdf):
 # "KOLOM K2 800x800" in labels must not outrank the real table (lesson from the DRC set).
 _E = {"columns": r"kolom|column", "beams": r"balok|beam|sloof", "slabs": r"pelat|plat|slab",
       "foundations": r"pondasi|fondasi|foundation|footing|pile ?cap|poer|tiang|bore ?pile",
-      "roof": r"atap|roof|kuda[- ]kuda|truss|gording|purlin"}
+      "roof": r"atap|roof|kuda[- ]kuda|truss|gording|purlin|kanopi|canopy|crown"}
 PHRASES = {k: [r"(tabel|daftar|tabulasi)\s+((penulangan|pembesian|tulangan)\s+)?(" + v + r")",
                r"(tipe|type)\s+((perkuatan|jacketing|strengthening)\s+)?(" + v + r")",
                r"detail\s+((penulangan|pembesian)\s+)?(" + v + r")",
                r"(" + v + r")\s+(schedule|table|type)"] for k, v in _E.items()}
-PHRASES["roof"] += [r"(tabel|daftar)\s+profil", r"denah\s+rangka\s+atap", r"rencana\s+atap"]
+PHRASES["roof"] += [r"(tabel|daftar)\s+profil", r"profil\s+baja", r"denah\s+(pelat\s+)?rangka\s+(atap|crown|kanopi)",
+                     r"rencana\s+atap", r"potongan\s+(truss|rangka\s+atap|kuda)", r"detail\s+(tipikal\s+)?gording"]
+# steel profiles as written on roof sheets: WF 350x175x7x11, WF.350.175.7.11, C 125.50.20.2,3, 2L 70x70x6
+PROFILE = re.compile(r"(?<![a-z])(wf|hb|h|cnp|lc|c|2l|l)\s*[. ]?\s*\d{2,3}(\s*[.x×]\s*\d+(,\d+)?){1,4}")
 TITLE = re.compile(r"^(detail|tabel|daftar|denah|potongan|rencana|schedule)\b.*$", re.M)
 
 
@@ -69,6 +73,8 @@ def score(text, element):
     keys = sum((ELEMENT[k] for k in kinds), [])
     e_hits = [k for k in keys if re.search(r"(?<![a-z0-9])" + re.escape(k) + r"(?![a-z0-9])", low)]
     sizes = len(set(re.findall(r"\d{2,4}\s*[x×]\s*\d{2,4}", low)))  # distinct sizes only
+    if element in ("roof", "all"):
+        sizes = max(sizes, len({m.group(0) for m in PROFILE.finditer(low)}))
     titles = [m.group(0).strip() for m in TITLE.finditer(low)]
     title_hit = any(re.search(_E[k], t) for k in kinds for t in titles)
     plan_only = any(t.startswith("denah") for t in titles) and not p_hits

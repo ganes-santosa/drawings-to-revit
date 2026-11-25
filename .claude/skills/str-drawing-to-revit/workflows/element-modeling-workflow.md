@@ -83,7 +83,9 @@ Layout plans per level for this element, plus sections/details that give heights
 ### B2. Build the instance table
 One row per instance: mark → catalog type, plan position (grid intersection + dimensioned offsets, or calibrated measurement), level, base/top or top elevation, orientation/rotation, **supports** (what each end or base sits on, `building-logic.md` §3), source sheet, provenance (`EXPLICIT / DERIVED / MEASURED / ASSUMED`). Element-specific columns: each reference §B.
 
-### B2b. Clean the table (beams and slabs: required)
+### B2b. Clean the table (columns, beams and slabs: required)
+Columns: de-duplicate, size from the schedule, stacks continuous, stack alignment, base support, top (`columns.md` B3b).
+
 Slabs: generate outlines from real face lines, clean loop artifacts, snap edges to edge-beam faces, clean again, pre-build audit (`slabs.md` B2b). Build beams first.
 
 Beams: before placing anything, clean the instance table in fixed order: de-duplicate → add missing edge/tie beams → resolve ends to supports → flush intent → merge runs then apply the segmentation mode → set joints → check the table (`beams.md` B2b). Place columns first so the table uses the columns as modelled.
@@ -103,16 +105,21 @@ Place **one** typical instance. Read back: location (mm), level, offsets, type, 
 - **Supports first:** foundations/columns → primary beams → secondary beams → slabs; roof columns → rafters/trusses → purlins.
 - Every instance gets its Mark and Comments (sheet, drawing mark, provenance, `LOW CONFIDENCE`, `CANTILEVER`).
 - try/catch per instance; return `id | mark | result`.
+- **Re-runnable:** skip rows whose Mark already exists (`revit-api-and-automation.md` §5). After a timeout or modal dialog, count what committed, then re-run the same batch; run `scripts/revit/find_duplicates.cs`.
 
-### B5b. Audit and repair (beams and slabs: required)
+### B5b. Audit and repair (columns, beams and slabs: required)
+Columns: `find_duplicates.cs`, `audit_columns.cs`, `check_connectivity.cs` (`columns.md` B5b).
+
 Slabs: the 12-check slab audit on every level after every change; classify beams sticking out before fixing; re-compute dak on the levels below (`slabs.md` B5b, B6).
 
 Beams: after each floor is placed, audit it and repair only what the audit lists (`beams.md` B5b). If the table was cleaned well (B2b), this pass should find little.
 
+Any repair that moves, resizes or re-heights an element: re-check what rests on it (`building-logic.md` §7) before closing the floor.
+
 ### B6. Verify the placement — GATE
 1. Connectivity: `scripts/revit/check_connectivity.cs` → 0 unexplained floating ends / unsupported columns.
 2. The element reference §B verification list (positions, elevations, orientation, counts).
-3. `document.GetWarnings()` grouped by description; duplicates; marks blank/duplicated.
+3. `document.GetWarnings()` grouped by description; duplicates and marks blank/duplicated (`scripts/revit/find_duplicates.cs`).
 Fix model errors, re-run the failed checks. Drawing discrepancies are reported, not "fixed".
 
 ---

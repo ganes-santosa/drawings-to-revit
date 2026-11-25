@@ -65,6 +65,13 @@ return sb.ToString();
 - Batch size: tens to low hundreds of elements per call; tune after measuring.
 - Keep reusable scripts under `assets/examples/scripts/` once **verified**; header comment: Revit version, date, what was verified.
 - Units: API lengths in feet (mm/304.8).
+- **Re-runnable placement** `[THEORY]`: a batch must be safe to run twice. Read the Marks already in the model and skip those rows, so a retry after a timeout or modal dialog (where part of the batch usually committed) places only what is missing:
+  ```csharp
+  var have = new HashSet<string>(new FilteredElementCollector(document).OfCategory(BuiltInCategory.OST_StructuralFraming)
+      .WhereElementIsNotElementType().Select(e => e.get_Parameter(BuiltInParameter.ALL_MODEL_MARK)?.AsString() ?? ""));
+  // per row: if (have.Contains(mark)) { sb.AppendLine(mark + "|skip, exists"); continue; }
+  ```
+  Requires a unique Mark on every row before placing (planning gate). Check with `scripts/revit/find_duplicates.cs` after any retry.
 
 ## 6. Untested capabilities to probe (backlog)
 `Floor.Create` signature on the installed version; view creation (`ViewPlan.Create`, `View3D.CreateIsometric`); schedule creation (`ViewSchedule.CreateSchedule`); `document.GetWarnings()`; DWG/PDF underlay import via `ImportInstance`/`Document.Link` — see live-test plan.

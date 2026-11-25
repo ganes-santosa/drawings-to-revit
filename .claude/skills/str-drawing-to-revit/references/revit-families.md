@@ -30,4 +30,4 @@ Type dimensions read back equal schedule values (mm); material assigned; categor
 | Wrong profile silently used | Nearest-size substitution | Create exact type or flag LOW CONFIDENCE | [IMPORTED KPwBI] |
 
 ## 6. Related
-`beams.md`, `columns.md`, `structural-framing.md`, `revit-api-and-automation.md`.
+`beams.md`, `columns.md`, `roof-framing.md`, `revit-api-and-automation.md`.

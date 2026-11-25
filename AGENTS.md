@@ -6,7 +6,7 @@
 Read `HANDOFF.md` first (where we left off), then `.claude/skills/str-drawing-to-revit/SKILL.md`.
 
 ## Current focus (do not widen without being asked)
-Setup (units, levels, grids), **columns, beams, slabs, foundations, roof (`framing`)**. Walls, stairs, reinforcement, connections and views were removed from the repo to stay focused (recoverable from git tag `v1.1.0`); do not re-add them unless asked.
+Setup (units, levels, grids), **columns, beams, slabs, foundations, roof (`roof`, alias `framing`)**. Walls, stairs, reinforcement, connections and views were removed from the repo to stay focused (recoverable from git tag `v1.1.0`); do not re-add them unless asked.
 
 ## Working rules
 1. **Develop locally.** GitHub is a backup. **Never push, tag, or move tags unless the user says so.** Never force-push or rewrite published history.
@@ -31,6 +31,6 @@ Beam segmentation (and slab/column segmentation) is chosen **per project** at se
 ```
 .claude/skills/str-drawing-to-revit/   the skill (SKILL.md, references/, workflows/, scripts/, assets/)
 assets/legacy/ (inside the skill)      verbatim copy of the original KPwBI skill: evidence trail
-samples/                               user's drawing sets (git-ignored)
+samples/                               user's drawing sets (git-ignored); project logs in samples/<project>/_log/
 AGENTS.md, CLAUDE.md, HANDOFF.md       this file, pointer, session state
 ```

@@ -2,7 +2,7 @@
 
 > Legend: SKILL.md §8 · Last reviewed: 2026-11-23 · Revit tested: RSUD Cakung field report (Revit 2026, `mcp-server-for-revit`, ~2,330 → 904 beams on 4 floors; `assets/field-reports/2026-11-23-rsud-cakung-beam-cleanliness.md`) for placement, clean-up and audit; KPwBI items imported; the rest `[THEORY]`.
 > Order of work: `workflows/element-modeling-workflow.md` (Stage A types → gate → Stage B: instance table → **clean the table** → place once → **audit and repair** → gate). This file supplies the beam-specific details for each step.
-> Support and connectivity rules (nothing floats): `building-logic.md` — read it before placing. Roof steel, trusses, purlins: `structural-framing.md`.
+> Support and connectivity rules (nothing floats): `building-logic.md` — read it before placing. Roof steel, trusses, purlins: `roof-framing.md`.
 
 ## 1. Scope
 Floor and roof beams, concrete and steel: types, plan lines, end points, elevations, justification, joins, continuity, clean-up and audit. Not covered: beam design, rebar.
@@ -39,7 +39,7 @@ Floor and roof beams, concrete and steel: types, plan lines, end points, elevati
 1. **Find a family:** inventory `OST_StructuralFraming`. Typical: concrete rectangular beam family with type parameters `b`, `h`; steel WF/H/I families with a type catalog. KPwBI: concrete family **`BALOK BETON PERSEGI`** (`b`, `h`), types `BALOK BETON bxhmm`; steel types named by profile `WF350x175x7x11` `[IMPORTED KPwBI]`.
 2. **Duplicate** for a missing size, dimensions in a separate call (same pattern as `columns.md` A4–A5: `Duplicate`, then `LookupParameter("b"/"h").Set(mm/304.8)`, material via `STRUCTURAL_MATERIAL_PARAM`, Type Mark) `[THEORY]`.
 3. **Steel from a type catalog:** `document.LoadFamilySymbol(path, "WF350x175x7x11")` `[THEORY]`, or duplicate + set h, b, tw, tf, r `[IMPORTED KPwBI]`.
-4. **No family:** build from `Metric Structural Framing - Beams and Braces.rft` (workflow A5). For angles/channels with no family, KPwBI used DirectShape extrusions (`structural-framing.md`) `[IMPORTED KPwBI]`.
+4. **No family:** build from `Metric Structural Framing - Beams and Braces.rft` (workflow A5). For angles/channels with no family, KPwBI used DirectShape extrusions (`roof-framing.md`) `[IMPORTED KPwBI]`.
 5. **Know the family's quirk before placing:** the KPwBI concrete family flexed only one face with `b`, so instances must use Y justification Center (B5) `[IMPORTED KPwBI]`. Test one instance's solid against its location line for every new family.
 
 ### A6. Gate
@@ -127,6 +127,7 @@ return b.Id.ToString();
 - Sloped members (knee braces): `StructuralType.Beam` with sloped ends, not Brace `[IMPORTED KPwBI]`.
 - Marks `[IMPORTED KPwBI]`: concrete `BLn-W/E/T-nnn`, `BLA-*`, `BLD-*`; steel `BSL1/BSL2/BSM/BSA-nnn` (RSUD used `ST-BM-L01-nnn`). Comments: drawing mark, sheet/page, provenance, `LOW CONFIDENCE`, `CANTILEVER`, and every clean-up action appended.
 - Order: columns first, then primary beams, then secondaries.
+- **Re-runnable:** read the Marks already on the level first and skip those rows (`revit-api-and-automation.md` §5). After a timeout, re-run the same batch: only the missing beams are placed. Then `scripts/revit/find_duplicates.cs`.
 - **Speed:** copy all end points into plain arrays, do the maths there, then write only the changed beams. Nested loops of Revit API calls (e.g. `Line.Project`) time out; the array method handles 700 × 700 beams, and four floors, in one call under a second `[VERIFIED RSUD]`.
 - MCP alternative: `create_line_based_element` sets no justification, offsets, joins or marks: use the script above.
 
@@ -150,7 +151,7 @@ Report per floor `[VERIFIED RSUD]` (script); targets `[EXPERIMENTAL RSUD]`:
 - **Beams passing through a column interior** without ending in it: mode B target 0; modes A/C expected at supports, review the rest;
 - **Segmentation matches the project decision:** mode B, every beam ends at a support or cantilever tip; mode C, no beam crosses a zone line; every mode, no beam crosses a dilatation joint;
 - **Long unsupported spans** (review);
-- **End offsets ≠ the level standard** (e.g. −50), except drawn steps and upstands: catches beams reset by a curve edit or placed at the wrong level (RSUD: one beam at offset −18000, invisible in plan, "floating" in 3D) `[VERIFIED RSUD]`;
+- **End offsets ≠ the expected offset for that beam's SFL zone** (SFL of the zone at the beam, minus the level elevation; zones from the project log level table; a beam on a zone boundary takes the higher SFL, B2a.6), except drawn steps and upstands. One standard per floor is wrong when the floor has several SFL zones (wet areas, terraces). This check catches beams reset by a curve edit or placed at the wrong level (RSUD: one beam at offset −18000, invisible in plan, "floating" in 3D) `[VERIFIED RSUD]`;
 - **Cantilever (OV/Sov) tips without an edge beam closing the row** (target 0: a free tip means a missing edge beam) `[VERIFIED RSUD]`;
 - **Count of `LOW CONFIDENCE` beams.**
 
@@ -186,4 +187,4 @@ RSUD final numbers for reference: duplicate marks 0, overlaps 0, non-cantilever 
 | A deeper beam's end face shows below a shallower one at a T | Real geometry | Accept | [VERIFIED RSUD] |
 
 ## Related
-`building-logic.md`, `columns.md`, `slabs.md`, `structural-framing.md`, `drawing-interpretation.md`, `revit-families.md`, `model-validation.md`, `assets/field-reports/2026-11-23-rsud-cakung-beam-cleanliness.md`.
+`building-logic.md`, `columns.md`, `slabs.md`, `roof-framing.md`, `drawing-interpretation.md`, `revit-families.md`, `model-validation.md`, `assets/field-reports/2026-11-23-rsud-cakung-beam-cleanliness.md`.

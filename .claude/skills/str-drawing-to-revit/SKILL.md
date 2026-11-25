@@ -44,7 +44,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 | `beams` (`beam`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/beams.md` | |
 | `slabs` (`slab`, `floors`, `floor`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/slabs.md` | |
 | `foundations` (`foundation`, `footings`, `footing`, `piles`, `pilecaps`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/foundations.md` | Isolated, strip, raft, pile caps, piles |
-| `framing` (`steel`, `trusses`, `truss`, `bracing`, `roof`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/structural-framing.md` | Steel / truss / brace systems (beams.md covers plain beams) |
+| `roof` (`framing`, `steel`, `trusses`, `truss`, `bracing`, `purlins`, `canopy`, `atap`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/roof-framing.md` | Steel roof: trusses, arches, roof frames, canopies, purlins, rods (beams.md covers plain beams) |
 | `families` (`family`, `types`) | `references/revit-families.md` | Family/type selection and creation |
 | `api` (`automation`, `mcp`, `probe`) | `references/revit-api-and-automation.md` | Tool probing, API patterns, script limits |
 | `review` (`qc`, `validate`, `check`, `audit`) | `workflows/quality-control-workflow.md`, `references/model-validation.md`, `references/building-logic.md` | Compare model to drawings; report |
@@ -52,7 +52,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 | `learn` (`document`, `record`, `lesson`) | `references/lessons-learned.md`, `references/_template.md`, §8 below | Record a tested result into the right file |
 | `help` (`?`, `list`) | none | Print this table |
 
-**Focus:** setup, columns, beams, slabs, foundations, roof (`framing`). Other element types (walls, stairs, reinforcement, connections, views) were removed to stay focused; they can be restored from git tag `v1.1.0` and re-added as routes.
+**Focus:** setup, columns, beams, slabs, foundations, roof. Other element types (walls, stairs, reinforcement, connections, views) were removed to stay focused; they can be restored from git tag `v1.1.0` and re-added as routes.
 
 **Adding a route:** (1) create `references/<topic>.md` from `references/_template.md`; (2) add one row above; (3) run `python ${CLAUDE_SKILL_DIR}/scripts/check_skill.py` — it fails if a row points at a missing file or a reference is unrouted; (4) add a line to `DEVLOG.md`. Nothing else needs rewriting.
 
@@ -66,7 +66,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 2. **Never silently resolve a conflict** between drawings, schedules, details or notes. Log it, show the sources, and either ask or follow the documented precedence (§5) *and say so*.
 3. **Label provenance.** Every value is `EXPLICIT` (written on a drawing), `DERIVED` (computed from explicit values), `MEASURED` (scaled from verified-calibrated geometry) or `ASSUMED`. Anything not `EXPLICIT`/`DERIVED` is flagged in the element's Comments with `LOW CONFIDENCE` and logged.
 4. **Drawn but undimensioned** → model it from the best evidence (order: related sheet → calibrated measurement → repeated/adjacent elements → visual estimate), flag `LOW CONFIDENCE`. Leaving a drawn element out is worse than a flagged estimate. This includes elements drawn in an unusual graphic convention (one-sided or outline-only edge beams): "model it, then tag it". **Not drawn** → do not model. (User preference carried from field use.)
-5. **Preserve drawn geometry**, including off-grid offsets and eccentricities. Never snap to a grid for convenience.
+5. **Preserve drawn geometry**, including off-grid offsets and eccentricities. Never snap to a grid for convenience. The only moves allowed are the **rule-based snaps** in the element references (beam ends to their support, flush faces, slab edges to edge-beam faces), each within its stated tolerance and noted in Comments. A move beyond the tolerance is a question for the user, not a snap.
 6. **Traceability.** Every modelled element carries a Mark and a Comments entry: source sheet(s), tag/type from the drawing, provenance. Never leave Marks blank or duplicated.
 7. **No design decisions.** Do not resize, re-detail, or "fix" the structure. Report suspected drawing errors; do not correct them.
 8. **Final-state modelling.** For renovation work, model the final condition. Check each sheet title for existing / demolition / new (`Eksisting`, `Existing`, `Bongkaran`, `Demolition`).
@@ -76,11 +76,14 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 
 ## 4. General Revit modelling principles
 
+- **Project log folder:** `<drawing set folder>\_log\` (for the sample sets `samples\<project>\_log\`), never inside the skill (`references/project-setup.md` §3 step 6).
 - **One plan coordinate system** in all logs; write the conversion to Revit internal coordinates (including any axis flip and mm→ft = ÷304.8) once, in the project log.
 - **Order by dependency:** grids/levels → foundations → columns → walls → beams/framing → slabs → stairs → reinforcement/connections, *when the drawings give foundation levels*. Heights flow top-down: **slab top sets beam top, beam soffit sets column base, column base sets cap top**. If foundation levels are missing (common), model columns → beams level by level → slabs → foundations → roof steel → secondary items, as in KPwBI. Adapt to the structure (steel roof, flat slab with no beams). Details: `workflows/full-modeling-workflow.md` Phase 3.
 - **Core procedure for every element:** Stage A **types** (find the schedule, catalog every type, create the types, verify them: gate) before Stage B **placement** (instance table with supports, pilot one, batch, verify: gate). `workflows/element-modeling-workflow.md`.
 - **Incremental:** one level or one element family per step; small scripts; verify and log after each step. Never build the whole model in one script.
 - **Clean the table, place once, then audit.** Placing beams exactly where drawn lines start and stop looks right in plan but is wrong in 3D. Clean the planning table first (de-duplicate, add edge/tie beams, resolve ends to supports, flush intent, merge runs, set joints), place once, then audit and repair only what shows in the model (`references/beams.md` B2b, B5b, B6). A floor is done at zero, or at a short list the user accepts.
+- **Re-runnable batches.** Every placement script skips rows whose Mark already exists, so re-running or retrying after a timeout places only what is missing. Run `scripts/revit/find_duplicates.cs` after any retry (`references/revit-api-and-automation.md` §5).
+- **Changes ripple.** Moving or resizing a placed element moves what rests on it: re-check its dependents before calling the change done (`references/building-logic.md` §7).
 - **Probe, then batch.** Place one test element, inspect its geometry/location/parameters, compare to the drawing, only then place the rest.
 - **Families over DirectShape** wherever a suitable family exists; DirectShape only where no family fits (and say so).
 - **After one failure, change method** — read the error, change the call/check/script size, and record the lesson. Never retry an identical approach.

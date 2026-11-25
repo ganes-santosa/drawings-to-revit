@@ -186,7 +186,7 @@ Run all after every change, on every level; report the numbers. Done at zero, or
 | 8 | Beam face outside the slab edge by 40–1200 mm along ≥ 0.9 m | 0, except faces along openings |
 | 9 | Free beam ends; OV/Sov tips without an edge beam | 0 |
 | 10 | Panels framed by beams with no slab or opening | 0, except voids |
-| 11 | Beam end offsets ≠ the level standard | 0, except drawn steps and upstands |
+| 11 | Beam end offsets ≠ the expected offset for their SFL zone | 0, except drawn steps and upstands |
 | 12 | Edge beam vs drawn outline offset > 100 mm | each checked against the beam sheet |
 
 Scripts (RSUD-specific): `prot.py` (#7), `side.py` (#8), `freeend.py` (#9), `encl.py` (#10), `audit.py` (#6). Also: area per mark vs the plan (±1%); top elevation = SFL per zone; every beam top at the slab top above or a documented step.

@@ -2,6 +2,22 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-25 — roof framing starting point (unreleased)
+- Read the roof sheets of the sample sets (DRC, Hunver, KPwBI GKU/GPNJ, RSUD; Bandara and Tower 4 have no searchable roof text).
+- `structural-framing.md` → `references/roof-framing.md`, rewritten in the A/B layout: roof systems seen in the samples, what-to-model decision (§2), profile notation (dots, decimal comma, 2L, LC), type creation incl. parameter probe and DirectShape fallback, 3D geometry record and instance table, arch radius worked example (RSUD), interpretation rules (slope spacing for purlins, panel points, stub columns), B3b clean table (nodes), sloped/curved member snippet, B5b audit, B6 checks.
+- New `scripts/revit/audit_roof.cs` (3D free ends incl. arcs, short members) `[THEORY]`.
+- Route renamed `framing` → `roof` (old words kept as aliases); `find_schedules.py` roof phrases and steel profile counting; building-logic supports for truss webs and stub columns; setup asks the roof scope; model-validation #21; troubleshooting rows.
+
+## 2026-11-25 — review fixes: two bugs, five gaps (unreleased)
+- `check_connectivity.cs`: height tests (beam-to-beam same floor only; column must reach the beam soffit; a column above does not count); free ends report why (`column top below beam soffit` closes the old [OPEN] item).
+- New read-only scripts `[THEORY]`: `find_duplicates.cs` (placed twice, duplicate/blank marks), `audit_columns.cs` (stack gaps/overlaps, stack shifts, free tops).
+- Re-runnable batches: skip existing Marks (api §5 snippet; beams, columns, workflow B5); SKILL.md §4.
+- SKILL.md rule 5 now allows only the rule-based snaps within their tolerances (it contradicted the beam/slab snaps).
+- `building-logic.md` §7 "Changes ripple": dependency table; workflow B5b points to it.
+- Offsets audited per SFL zone, not one value per floor (beams B6, slabs #11, model-validation #20, level table with zone extents).
+- `columns.md` B3b clean table and B5b audit; workflow B2b/B5b include columns.
+- Project log folder defined: `<drawing set folder>\_log\` (project-setup §3 step 6, template, SKILL.md §4).
+
 ## 2026-11-24 — beam segmentation becomes a project decision (unreleased)
 - User requirement: decide per project whether beams are continuous or split (4D / Navisworks TimeLiner zones need pieces that do not cross zones).
 - `project-setup.md` §3 step 5b: ask once at setup (A continuous, B split at supports, C continuous within zones); recommend B when 4D is possible or unknown (merge later = scripted, split later = rework); slab segmentation and column stacks asked in the same round. Recorded in the project log (template updated).

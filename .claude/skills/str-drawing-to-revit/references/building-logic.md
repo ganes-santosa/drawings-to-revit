@@ -29,7 +29,9 @@ Never leave it silently. Decide which of the three it is, fix or flag it, and lo
 | Slab | beams or walls along its edges, or columns (flat slab). **Where an edge beam runs along an edge, the slab edge is that beam's outer face** in the model `[VERIFIED RSUD]` (`slabs.md` B2a.2) | drawn cantilever edge, void edge, joint face |
 | Pile cap / footing | piles / ground, with a column or wall on top | none: a cap with nothing on it is an orphan (ask) |
 | Rafter / truss | column, wall, ring beam or roof beam at both supports | drawn overhang (eave) |
-| Purlin | rafters / trusses at every crossing | end overhang past the last rafter, if drawn |
+| Truss web / post | a panel point on a chord (both ends, in 3D) | none |
+| Stub column (roof) | a concrete beam, column or slab edge below; truss heel on top | none |
+| Purlin | rafters / trusses at every crossing (sitting on top) | end overhang past the last rafter, if drawn |
 | Brace | members at both ends | none |
 
 ## 3. Plan the supports before placing (support table)
@@ -83,13 +85,29 @@ Only cantilever tips may be free (Comments `CANTILEVER`; RSUD drawings tag them 
 6. A free end that will not resolve usually means a **missing support** (an edge beam drawn differently, `drawing-interpretation.md` §5), not a bad end.
 
 Script: `scripts/revit/check_connectivity.cs` implements the definition (read-only report). The rule is verified on RSUD; this script version has not been run yet `[THEORY]`. Paste it into `send_code_to_revit`. It reports:
-- **Beam ends** that are not connected by (a) or (b), or touching a wall, excluding `CANTILEVER` ends.
+- **Beam ends** that are not connected by (a) or (b), or touching a wall, excluding `CANTILEVER` ends. **Height counts:** a beam connects only to a beam on the same floor (their heights overlap), and a column only if it reaches the beam soffit. A column that starts on top of the beam does not hold it.
+- **Why** for each free end: `no support`, or `column top below beam soffit` (the column is in the right place but too short: fix the column top, height chain).
 - **Column bases** with no foundation, column, beam or wall just below.
-- Planned, not in the script yet: columns whose top is lower than a beam framing into them `[OPEN]`.
+
+Column stacks, free column tops and duplicates: `scripts/revit/audit_columns.cs`, `scripts/revit/find_duplicates.cs`.
 
 Every floating member in the report must end up as: fixed, a documented drawn cantilever, or an open question for the user. Target: 0 unexplained.
 
-## 7. Failure cases
+## 7. Changes ripple (re-check what rests on a changed element)
+A placed element is a support for others. When it moves, changes size or changes height, what rests on it must follow, or it floats or protrudes `[THEORY]`, built from RSUD cases (girder moved → secondaries short; slab edit → dak below wrong) `[VERIFIED RSUD]`.
+
+| Changed | Re-check | How |
+|---|---|---|
+| Column moved, resized or rotated | beams ending in it (connected end, flush faces), slab edges along those beams | `beams.md` B5b re-scan ±400 mm; `slabs.md` edge snap; connectivity |
+| Column top or base changed | beams framing in (soffit reached?), column above (stack gap), cap below | `check_connectivity.cs`, `audit_columns.cs` |
+| Beam moved, resized or re-typed | secondaries framing into it; slab edges snapped to its outer face | re-scan ±400 mm; slab audit #7, #8, #12 |
+| Beam top changed | the slab it carries (top = SFL), columns below (reach the soffit?) | height chain; beam audit end offsets |
+| Slab outline or SFL changed | edge beams (top, position), dak on every level below | `slabs.md` B5b step 3; beam audit |
+| Element deleted | everything that rested on it | connectivity on that level and the level above |
+
+How: before the change, list the dependents (beams with an end inside the column footprint; beams framing into the beam; slab edges within 260 mm of its outer face). After it, re-run the audits for those elements only, then the floor audit. Record the change in the project log's change history.
+
+## 8. Failure cases
 | Symptom | Likely cause | Fix | Status |
 |---|---|---|---|
 | Beam ends short of the column | End point taken from where the drawn line stops (column face, text label, dash gap) | Extend along the axis to the support (§6) | [VERIFIED RSUD] |
@@ -99,7 +117,8 @@ Every floating member in the report must end up as: fixed, a documented drawn ca
 | Beam at the right plan position but floating above/below the column | Wrong level/offset; column top lower than beam soffit | Fix level/offset; check the height chain (slab → beam → column) | [THEORY] |
 | Beam placed before its girder exists | Wrong modelling order | Supports first (§3) | [THEORY] |
 | Beam ends off by ~300× or far away | mm passed as feet | Convert (÷304.8) | [THEORY] |
+| Check says connected, but the beam floats in 3D | Old check ignored height: a beam on another floor stacked in plan counted as support | Height test (script 2026-11-25) | [THEORY] |
 | Cap with no column on it | Demolished structure on an "existing" plan | Ask; foundations.md | [IMPORTED KPwBI] |
 
-## 8. Related
-`beams.md`, `columns.md`, `slabs.md`, `foundations.md`, `structural-framing.md`, `model-validation.md` (#17), `troubleshooting.md`.
+## 9. Related
+`beams.md`, `columns.md`, `slabs.md`, `foundations.md`, `roof-framing.md`, `model-validation.md` (#17), `troubleshooting.md`.

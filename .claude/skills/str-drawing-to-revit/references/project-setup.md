@@ -25,8 +25,10 @@ Drawing units & scale (from Phase 1); whether the Revit file already exists, and
 
      Why B is the default when unsure: merging split beams into runs later is a scripted, proven step (`beams.md` B2b step 5, RSUD); splitting continuous beams later means re-creating beams and redoing joins and offsets. Split is the reversible choice.
      In every mode: always split at dilatation joints and where the type changes.
+   - **Roof framing scope** if the set has a steel roof (`roof-framing.md` §2): purlins modelled (default yes when drawn), sag rods and wind rods (default not modelled), light-gauge (baja ringan) roofs (skip / ring beam only / placeholder).
    - Ask in the same question round if the project may need it: **slab segmentation** (one slab per bay or zone vs one per level piece) and **column stacks** (per storey is the default, `columns.md` B3.1). Same reasoning: 4D zones need pieces that do not cross zone lines.
 6. **Create the project log** from `assets/examples/project-log-template.md` (inputs, conversion, levels, conflicts, assumptions, not-modelled list, counts). Update after every step.
+   **Where:** a `_log` folder next to the drawing set: `<drawing set folder>\_log\` (for the sample sets `samples\<project>\_log\`). It holds `project-log.md`, the type catalog, instance tables, outline files, the RFI log and script outputs. Never inside the skill folder: project facts are not skill knowledge (SKILL.md §8). If the drawing folder is read-only or shared, ask the user for another place and write it at the top of the log. Note: `samples\` is git-ignored, so these logs are not backed up to GitHub.
 7. **Do not put the AI's name in view or element names** (user preference `[IMPORTED KPwBI]`). Use project-style names from the start.
 
 ## 4. Verification

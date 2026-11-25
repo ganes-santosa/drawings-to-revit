@@ -10,7 +10,7 @@
 - #slabs [IMPORTED KPwBI] overlapping floor rebuild raises modal dialog that looks like a timeout → slabs.md §5
 - #drawings [IMPORTED KPwBI] end-on section label misread (30 posts, beams 950 mm high) → drawing-interpretation.md §5
 - #foundations [IMPORTED KPwBI] DirectShape convention; group split cap/pile; orphan caps from demolished frame → foundations.md
-- #framing [IMPORTED KPwBI] no angle/CNP family → DirectShape extrusions → structural-framing.md §5
+- #framing [IMPORTED KPwBI] no angle/CNP family → DirectShape extrusions → roof-framing.md A4–A5
 - #views [IMPORTED KPwBI] template-injected filters hide slabs → troubleshooting.md
 - #preferences Model drawn-but-undimensioned (flag LOW CONFIDENCE); model drawn offsets exactly; families over DirectShape; no AI name in view names; ask with options + recommendation → SKILL.md §3
 
@@ -30,3 +30,7 @@
 - #slabs [VERIFIED RSUD 2026-11-24] Slab field report integrated (~180 slabs + 59 shafts, 8 levels): clean = consistent with the beams; extent = drawn outline polygon (never rectangles); **edge line = edge-beam outer face** (replaces "outline, not beam faces"); vector cell-grid outlines, never raster; 5 loop-artifact kinds with guards; true arcs (Bézier detection, Arc in CurveLoop, curved beams); shaft openings; one level per call; dak derived from cover and ripples down; 12-check slab audit; fix the class, not the instance. → slabs.md (rewritten), beams.md B4–B6, building-logic.md §2/§6, drawing-interpretation.md §5, revit-api-and-automation.md §4, troubleshooting.md, model-validation.md #19–20, SKILL.md §4; report + scripts in assets/field-reports/
 - #beams [VERIFIED RSUD 2026-11-24] Setting LocationCurve.Curve resets STRUCTURAL_BEAM_END0/1_ELEVATION to 0: read before, write back after → beams.md B4–B5
 - #beams [THEORY 2026-11-24] User requirement: beam segmentation is a per-project choice asked at setup (A continuous / B split at supports / C continuous within zones), for 4D (Navisworks TimeLiner) zoning. Default when unsure: B, because merging later is scripted while splitting later is rework. Split modes not yet run → project-setup.md §3.5b, beams.md B2a.8, B2b.5
+- #connectivity [THEORY 2026-11-25] Review fix: the beam-to-beam test ignored height, so beams stacked in plan on different floors counted as connected; now same floor only, columns must reach the beam soffit, free ends say why → check_connectivity.cs, building-logic.md §6
+- #api [THEORY 2026-11-25] Batches must be re-runnable: skip existing Marks; find_duplicates.cs after retries → revit-api-and-automation.md §5
+- #columns [THEORY 2026-11-25] Columns get a clean table (B3b) and an audit (B5b, audit_columns.cs) like beams and slabs; changes ripple to dependents (building-logic.md §7); offsets audited per SFL zone; project log in <drawing set>\_log\
+- #roof [VERIFIED 2026-11-25, samples] Roof sheets read in 5 sets: trusses on stub columns (KPwBI GKU p36, GPNJ p50-52), curved arch (RSUD p62-65), steel crown frame with PROFIL BAJA table (Hunver p30), flat canopy (DRC p65-70), light-gauge schematic (DRC p72). Profiles sit in a small PROFIL BAJA table on the plan sheet or on each member; text is often outlined. find_schedules.py --element roof ranks the right sheet first in all 5. Revit procedures [THEORY] → roof-framing.md (new, A/B layout), audit_roof.cs
