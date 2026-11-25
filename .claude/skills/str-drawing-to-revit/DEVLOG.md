@@ -2,6 +2,11 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-25 — one repo, two skills, shared scripts (unreleased)
+- `ars-to-revit` moved into this repo (copied from `D:\Outpost\Coding\ars-to-revit`, commit 6dc17fe, byte-identical). Shared originals live in `shared/` at the repo root; `tools/sync_shared.py` copies them into both skills with a "SHARED COPY" header; `--check` fails on drift and runs both checkers.
+- Shared now: `scripts/find_schedules.py` (one engine, `--discipline str|ars`, default from the skill folder; both rankings unchanged, regression-tested on DRC and KPwBI), `check_skill.py` (the ars version: also checks argument-hint routes and the 500-line limit), `pdf_calibrate.py`, `scripts/revit/find_duplicates.cs` (now also walls, ceilings, roofs, doors, windows), `rfi-log-template.md`, one project log template for both disciplines.
+- `say_hello` dropped as a connection test (architecture skill found it blocks the API): workflow Stage 0, api environment note.
+
 ## 2026-11-25 — roof framing starting point (unreleased)
 - Read the roof sheets of the sample sets (DRC, Hunver, KPwBI GKU/GPNJ, RSUD; Bandara and Tower 4 have no searchable roof text).
 - `structural-framing.md` → `references/roof-framing.md`, rewritten in the A/B layout: roof systems seen in the samples, what-to-model decision (§2), profile notation (dots, decimal comma, 2L, LC), type creation incl. parameter probe and DirectShape fallback, 3D geometry record and instance table, arch radius worked example (RSUD), interpretation rules (slope spacing for purlins, panel points, stub columns), B3b clean table (nodes), sloped/curved member snippet, B5b audit, B6 checks.

@@ -6,3 +6,7 @@ out/
 *.pdf
 __pycache__/
 .venv/
+families/
+*.rte
+*.rft
+*.000?.rfa

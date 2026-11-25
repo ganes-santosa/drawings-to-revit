@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SHARED COPY - do not edit here. Edit shared/scripts/pdf_calibrate.py in the repo, then run tools/sync_shared.py
 """Piecewise grid calibration for vector PDF drawings (pdfplumber).
 
 Maps PDF points -> real-world mm, grid-to-grid, independently per axis.  Never uses one

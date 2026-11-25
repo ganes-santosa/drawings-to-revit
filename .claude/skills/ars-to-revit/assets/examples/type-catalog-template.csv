@@ -1,0 +1,4 @@
+category,code,description,level_range,width_mm,height_mm,thickness_mm,sill_mm,layers_or_frame,material_or_finish,count_expected,source_sheet_page,provenance,revit_family,revit_type_name,status,notes
+Walls,DN-01,Bata ringan plester aci 2 sisi,all,,,150,,15 plester + 120 bata + 15 plester,W1 paint both sides,,A-XXX p?,EXPLICIT,Basic Wall,DN-01 Bata Ringan 150,duplicate,example row - delete
+Doors,P1,Pintu kayu single swing,L1-L4,900,2100,,,frame 50x100 kayu,HPL,12,A-8101 p?,EXPLICIT,M_Door-Passage-Single-Flush,P1 - Pintu Kayu 900x2100,duplicate,example row - delete
+Windows,J1,Jendela aluminium casement,L2-L4,1200,1500,,900,frame 50x100 aluminium,TG02 clear glass,24,A-8111 p?,EXPLICIT,new (Metric Window.rft),J1 1200x1500,new family,example row - delete

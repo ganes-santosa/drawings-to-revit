@@ -1,9 +1,12 @@
+// SHARED COPY - do not edit here. Edit shared/scripts/revit/find_duplicates.cs in the repo, then run tools/sync_shared.py
 // find_duplicates.cs : read-only. Finds elements placed twice (e.g. after a batch was re-run or retried
-// after a timeout) and duplicate/blank Marks, for columns, framing, floors and foundations.
+// after a timeout) and duplicate/blank Marks. Covers structure (columns, framing, foundations) and
+// architecture (walls, floors, ceilings, roofs, doors, windows). Shared by both skills.
 // Duplicate = same category + same type + same bounding box within 10 mm. [THEORY]: not yet run.
-// Use after every retried batch and in every review (model-validation.md #2, #3). Delete nothing without the user's OK.
+// Use after every retried batch and in every review (model-validation.md: duplicates, marks). Delete nothing without the user's OK.
 var sb = new System.Text.StringBuilder(); double r = 304.8 / 10;   // feet -> 10 mm units
-var cats = new[] { BuiltInCategory.OST_StructuralColumns, BuiltInCategory.OST_StructuralFraming, BuiltInCategory.OST_Floors, BuiltInCategory.OST_StructuralFoundation };
+var cats = new[] { BuiltInCategory.OST_StructuralColumns, BuiltInCategory.OST_StructuralFraming, BuiltInCategory.OST_StructuralFoundation,
+    BuiltInCategory.OST_Walls, BuiltInCategory.OST_Floors, BuiltInCategory.OST_Ceilings, BuiltInCategory.OST_Roofs, BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows };
 int dupGeo = 0, dupMark = 0, blank = 0;
 foreach (var cat in cats) {
     var els = new FilteredElementCollector(document).OfCategory(cat).WhereElementIsNotElementType().ToElements();

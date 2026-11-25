@@ -13,7 +13,7 @@ Stage C  CLOSE-OUT  log, learn, report
 
 ## Stage 0 — Scope and prerequisites
 1. **Scope** from the task text: which element, levels, zones, marks. Confirm existing / demolished / new status of the sheets involved.
-2. **Prerequisites exist in Revit:** levels, grids, units and the coordinate conversion (else run `setup`). Run `say_hello`; if Revit is not connected, stop and tell the user.
+2. **Prerequisites exist in Revit:** levels, grids, units and the coordinate conversion (else run `setup`). Check the connection with the read-only probe (`revit-api-and-automation.md` §3) or `get_current_view_info`, never `say_hello` (its modal dialog blocks the API, seen 2026-11-24 in the architecture skill `[IMPORTED ARS]`). If Revit is not connected, stop and tell the user.
 3. **Read** the element reference and `references/building-logic.md`.
 4. **Read the project modelling decisions** from the project log (beam segmentation, slab segmentation, column stacks). If they are missing, ask them now (`project-setup.md` §3 step 5b) before Stage B.
 
