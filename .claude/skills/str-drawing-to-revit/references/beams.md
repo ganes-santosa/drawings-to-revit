@@ -141,6 +141,8 @@ Some problems only appear once beams are in Revit: a support the table never had
 5. If a modal dialog appears, the call looks like a timeout: the user dismisses it (Unjoin / OK, never Delete); count what committed before retrying (`revit-api-and-automation.md` §4).
 6. **Re-audit.** The floor is done at zero, or at a short list the user accepts. Show the user the numbers and the list.
 
+**Select ends explicitly** `[VERIFIED RSUD]`: move ends by element id and end index, exclude ends at a column centre, then read back. "All beam ends at the old point" also moved 12 unrelated girder ends on RSUD.
+
 If the repair pass finds many problems, the table cleaning (B2b) missed something systematic: fix the rule or the detection there and record the lesson, rather than repairing beam by beam.
 
 ### B6. Verification — the audit (what "done" means for a floor)

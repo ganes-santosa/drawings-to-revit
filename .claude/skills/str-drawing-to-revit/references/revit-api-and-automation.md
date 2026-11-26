@@ -51,6 +51,15 @@ return sb.ToString();
 - LINQ (`.Any(...)`) worked in the host on RSUD.
 - Moving/trimming via `((LocationCurve)el.Location).Curve = Line.CreateBound(a, b)` works at scale, **but resets the beam's `STRUCTURAL_BEAM_END0/1_ELEVATION` to 0**: read the offsets first and write them back.
 
+### Bridge behaviour confirmed on RSUD roofs and voids (2026-11-25) `[VERIFIED RSUD, Revit 2026]`
+- Modal warnings that also block the API: "Highlighted floors overlap", **moving or changing a model group**. After a timeout: user closes the dialog, then re-query what committed (32 of 32 rods existed after one "timeout").
+- Avoid overlap warnings by construction: a new slab's outline never overlaps a neighbour, even briefly; or delete the old one first in the same call.
+- The MCP template always has a transaction open: `document.IsModifiable == true`, so `SketchEditScope` cannot start (no script edits of slab sketches). `Document.HasOpenTransaction` does not exist.
+- Compile quirks in Revit 2026: `ElementId.Value` (long) works, `IntegerValue` fails; `new ElementId(long)`; only `double[]` literals are safe; `Element` has no `SketchId`, cast to `Floor` first.
+- `File.WriteAllText` to the project folder works for exports (void outlines).
+- Deleting an element and reusing it in the same script throws: split into two calls and re-query by Mark.
+- `StructuralType.Brace` lets Revit re-attach member ends (moved up to 15 m); place all steel as Beam (`roof-framing.md` B4–B5).
+
 ### Bridge behaviour confirmed on RSUD slabs (2026-11-24) `[VERIFIED RSUD, Revit 2026]`
 - **One level per call** for heavy rebuilds: several levels in one call raised "insufficient memory" and rolled back everything.
 - After an exception, edits made **before** the error stayed committed (seen after an InvalidObject from iterating a cached list after `Delete`). Delete last or re-collect, then read back what committed.

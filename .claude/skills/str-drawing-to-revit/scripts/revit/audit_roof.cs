@@ -1,5 +1,6 @@
 // audit_roof.cs : read-only 3D audit of roof framing (roof-framing.md B5b). [THEORY]: not yet run.
-// Scope: framing members whose Mark starts with PREFIX (edit below), or all framing above ZMIN_MM.
+// Scope: framing members whose Mark starts with PREFIX (edit below), members of Revit trusses whose Mark starts
+// with PREFIX (roof-framing.md B4a), or all framing above ZMIN_MM.
 // An end is connected if, in 3D, it lies within (both members' half-depths + 30 mm) of the other member's
 // location line (arcs are split into short segments), or inside a column / wall bounding box +-20 mm.
 // CANTILEVER in Comments = allowed free end. Also lists members shorter than 100 mm.
@@ -8,11 +9,16 @@ var sb = new System.Text.StringBuilder(); double ft = 304.8, tb = 30 / ft, tc = 
 var fr = new FilteredElementCollector(document).OfCategory(BuiltInCategory.OST_StructuralFraming).WhereElementIsNotElementType().ToElements();
 var sup = new FilteredElementCollector(document).WherePasses(new LogicalOrFilter(new ElementCategoryFilter(BuiltInCategory.OST_StructuralColumns),
     new ElementCategoryFilter(BuiltInCategory.OST_Walls))).WhereElementIsNotElementType().ToElements().Select(e => e.get_BoundingBox(null)).Where(b => b != null).ToList();
+var inTruss = new HashSet<long>();   // members of Revit trusses whose Mark starts with PREFIX are in scope too
+foreach (var t in new FilteredElementCollector(document).OfClass(typeof(Autodesk.Revit.DB.Structure.Truss)).Cast<Autodesk.Revit.DB.Structure.Truss>()) {
+    var tm = t.get_Parameter(BuiltInParameter.ALL_MODEL_MARK); string tms = tm != null ? (tm.AsString() ?? "") : "";
+    if (PREFIX != "" && tms.StartsWith(PREFIX)) foreach (var id in t.Members) inTruss.Add(id.Value);
+}
 var mem = new List<Element>(); var segA = new List<XYZ>(); var segB = new List<XYZ>(); var segM = new List<int>(); var hd = new List<double>();
 foreach (var e in fr) {
     var lc = e.Location as LocationCurve; if (lc == null) continue;
     var mk = e.get_Parameter(BuiltInParameter.ALL_MODEL_MARK); string m = mk != null ? (mk.AsString() ?? "") : "";
-    bool inScope = (PREFIX != "" && m.StartsWith(PREFIX)) || Math.Min(lc.Curve.GetEndPoint(0).Z, lc.Curve.GetEndPoint(1).Z) * ft >= ZMIN_MM;
+    bool inScope = (PREFIX != "" && m.StartsWith(PREFIX)) || inTruss.Contains(e.Id.Value) || Math.Min(lc.Curve.GetEndPoint(0).Z, lc.Curve.GetEndPoint(1).Z) * ft >= ZMIN_MM;
     if (!inScope) continue;
     var s = document.GetElement(e.GetTypeId()) as FamilySymbol; Parameter d = null;
     if (s != null) d = s.LookupParameter("d") ?? s.LookupParameter("h") ?? s.LookupParameter("Height");

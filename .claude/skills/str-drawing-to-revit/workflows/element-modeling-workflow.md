@@ -46,7 +46,7 @@ Read labels at 300–400 dpi; outlined text is often not machine-readable (`draw
 5. Write the **type catalog** (`assets/examples/type-catalog-template.csv`; save in the project log folder). One row per drawing mark per level range, with: category, mark, level range, dimensions, material, source sheet/page, provenance, Revit family, Revit type name, status.
 
 ### A4. Map the catalog to what Revit has
-1. Inventory the project: `get_available_family_types` with the element's category (`OST_StructuralColumns`, `OST_StructuralFraming`, `OST_Floors`, `OST_StructuralFoundation`), or a collector script. List family, type, key dimension parameters, material.
+1. Inventory the project: `get_available_family_types` with the element's category (`OST_StructuralColumns`, `OST_StructuralFraming`, `OST_Floors`, `OST_StructuralFoundation`, `OST_Truss` for roof trusses), or a collector script. List family, type, key dimension parameters, material. Roof trusses: if no matching truss types exist, ask whether to make them first (recommended) or let the user load their own (`roof-framing.md` A4b).
 2. For each catalog row, set the status:
    - `exists`: a type with exactly these dimensions and material already exists → use it;
    - `duplicate`: a suitable family exists but not this size → duplicate a type of it;
@@ -91,6 +91,7 @@ Slabs: generate outlines from real face lines, clean loop artifacts, snap edges 
 Beams: before placing anything, clean the instance table in fixed order: de-duplicate → add missing edge/tie beams → resolve ends to supports → flush intent → merge runs then apply the segmentation mode → set joints → check the table (`beams.md` B2b). Place columns first so the table uses the columns as modelled.
 
 ### B3. Cross-check before placing
+- **Defaults vs drawings (SKILL.md §3.12):** for every reference rule or convention used to fill the table, check that this project's drawings do not say otherwise. List the defaults applied (rule, where it came from, which rows) in the project log as `ASSUMED`; anything the drawings contradict follows the drawings.
 - Counts per mark vs the schedule / plan totals.
 - Every instance's type is in the verified catalog (Stage A).
 - Every support cell filled, or the member is a drawn cantilever (Comments `CANTILEVER`).
@@ -106,6 +107,7 @@ Place **one** typical instance. Read back: location (mm), level, offsets, type, 
 - Every instance gets its Mark and Comments (sheet, drawing mark, provenance, `LOW CONFIDENCE`, `CANTILEVER`).
 - try/catch per instance; return `id | mark | result`.
 - **Re-runnable:** skip rows whose Mark already exists (`revit-api-and-automation.md` §5). After a timeout or modal dialog, count what committed, then re-run the same batch; run `scripts/revit/find_duplicates.cs`.
+- **Log after every block:** element ids, Marks, counts, tags and group sizes in the project log. After a crash or power cut, compare the reopened file with the log element by element, re-apply only the missing blocks, and compare with the last audit's counts `[VERIFIED RSUD]`.
 
 ### B5b. Audit and repair (columns, beams and slabs: required)
 Columns: `find_duplicates.cs`, `audit_columns.cs`, `check_connectivity.cs` (`columns.md` B5b).

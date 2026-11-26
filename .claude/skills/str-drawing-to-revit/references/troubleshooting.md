@@ -58,3 +58,10 @@
 | Audit flags many correct beam offsets | Floor has several SFL zones, compared to one standard | Compare to the zone's SFL (level table with zone extents) | beams B6 | [THEORY] |
 | Roof sheets not found by `find_schedules.py` | Text outlined on roof sheets | Drawing index, visual search, or ask the user | roof-framing §1.1 | [VERIFIED 2026-11-25, samples] |
 | Purlin count wrong per slope | Spacing applied in plan, not along the slope | Spacing along the slope (plan = s × cos θ) | roof-framing B3.7 | [THEORY] |
+| Steel rod/brace ends far from where placed | Placed as Brace; Revit re-attached the ends | Place as Beam; read ends back | roof-framing B4–B5 | [VERIFIED RSUD] |
+| Arc rods flat at one z | Revit flattens non-rafter arcs | Straight segments between members | roof-framing B4–B5 | [VERIFIED RSUD] |
+| Call "times out" after a group edit | Moving/changing a model group raises a modal | User closes it; re-query; rebuild groups delete → recreate → NewGroup | api §4 | [VERIFIED RSUD] |
+| Bulk end move shifted unrelated girders (12) | Ends selected by "all ends at the old point" | Select ends by element id and end index; exclude ends at a column centre; read back | beams B5b | [VERIFIED RSUD] |
+| A tag hit 33 beams instead of 1 | Tagged by type | Tag by element unless the user says type | SKILL.md §4 | [VERIFIED RSUD] |
+| A statement to the user was wrong | Based on a bounding box only | Confirm with the sketch outline or a point test first | SKILL.md §4 | [VERIFIED RSUD] |
+| Slab sketch holes cannot be removed by script | Open MCP transaction blocks SketchEditScope | Rebuild the slab (ask) or keep the holes | slabs B5c | [LIMIT] |

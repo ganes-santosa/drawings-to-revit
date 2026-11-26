@@ -20,17 +20,17 @@ Last updated: 2026-11-25 (ARS: KPwBI catalogs, core door/window families) · Rep
 - "Nothing floats" rule + `references/building-logic.md` (incl. §7 changes ripple) + read-only Revit scripts `check_connectivity.cs` (height-aware), `find_duplicates.cs` (shared), `audit_columns.cs`, `audit_roof.cs`.
 - Review fixes 2026-11-25: re-runnable batches, rule 5 allows only rule-based snaps, offsets per SFL zone, columns clean table (B3b) + audit (B5b), project log folder.
 - `columns.md`, `beams.md`, `slabs.md`, `roof-framing.md` in the types/placement layout. `roof-framing.md` (2026-11-25) is built from the roof sheets of five sample sets.
-- `assets/field-reports/`: RSUD Cakung beam (2026-11-23) and slab (2026-11-24) reports, integrated. Clean-up rules run on the planning table before placing, then an audit-and-repair pass (untested pre-placement version: compare with RSUD numbers on one floor).
+- `assets/field-reports/`: RSUD Cakung beam (2026-11-23), slab (2026-11-24) and roof / roof-support / continuous-void (2026-11-25) reports, all integrated (roof report: all steel as Beam, arch circle method, groups, roof sections govern columns, columns carrying nothing → hidden group, one shaft per vertical void, dak + MISSING SUPPORT rule, lift pits, discipline precedence asked at setup). Clean-up rules run on the planning table before placing, then an audit-and-repair pass (untested pre-placement version: compare with RSUD numbers on one floor).
 
 ### What is proven vs not
 - **Verified here:** skill syntax, `find_schedules.py` on real sets (columns 4/4 sets, roof sheets 5/5), Revit 2026 + family templates exist.
-- **Run in Revit by another agent (RSUD Cakung):** beam placement mechanics, connected ends, extension, merge, joints, flush snap, beam audit; slab outlines, clean-up, edge snapping, arcs, shafts, slab audit.
+- **Run in Revit by another agent (RSUD Cakung):** beam placement mechanics, connected ends, extension, merge, joints, flush snap, beam audit; slab outlines, clean-up, edge snapping, arcs, shafts, slab audit; steel roof frames (arch and mono-pitch, families from templates, groups), roof-support checks, continuous shafts.
 - **Never run in Revit:** columns, foundations, roof, type creation, and all repo scripts.
 
 ### Next steps (in order)
 1. **Live tests in Revit** on a scratch model the user prepares: `assets/examples/live-test-plan.md` tests 1–6. Use the read-only probe, not `say_hello`.
 2. Run `check_connectivity.cs`, `find_duplicates.cs`, `audit_columns.cs` on a test model with planted faults.
-3. Restructure `foundations.md` into the types/placement layout. First roof test: one KPwBI GPNJ truss (p50–51), then `audit_roof.cs`.
+3. Restructure `foundations.md` into the types/placement layout. First roof test: one KPwBI GPNJ truss (p50–51) as a **Revit Structural Truss** (new default, user rule 2026-11-25: method asked at setup, trusses recommended; types first, `roof-framing.md` A4b/B4a, all `[THEORY]`): build the truss family from `Metric Structural Trusses.rft` (API for chord/web lines is `[OPEN]`), place, compare members with the panel points, then `audit_roof.cs`.
 4. End-to-end pilot on DRC Kalimantan `3.DRC_STRUKTUR.pdf` (columns p23, beams p33, slabs p17), columns first.
 5. Get the RSUD agent's full clean-up and audit scripts; generalise the RSUD slab scripts into `scripts/`.
 6. `find_schedules.py` on Tower 4 ITS and Bandara (large, slow; roof text not searchable there).

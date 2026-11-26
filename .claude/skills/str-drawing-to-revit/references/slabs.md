@@ -86,11 +86,13 @@ Per piece, record: kind (B/S/D), type, level, top elevation (SFL), source sheet,
    - Where no edge beam runs, the drawn outline stays the edge (KPwBI: edges set at beam faces *where no edge beam ran* left stubs `[IMPORTED KPwBI]`). Together: "outline for extent, edge-beam face for the edge line".
    - Exclude edges on a dilatation joint (they stay on the joint) and internal boundaries between pieces (sample 120 mm outside the edge: inside another piece = internal).
    - **Offset > ~100 mm: suspect the beam.** Check it against the beam sheet; one of the two is misplaced (RSUD Lt1 north row beam ~190 mm off sheet p31).
-3. **Openings:** X-marked voids, stair, lift and shaft outlines → shaft openings (B4–B5), not sketch holes.
+3. **Openings:** X-marked voids, stair, lift and shaft outlines → shaft openings (B4–B5), not sketch holes. **A void through several floors = one shaft per vertical run, from the start**; slab sketches keep only their outer outline plus holes for single-level voids. Cleaning up per-level voids later is hard (B5c) `[VERIFIED RSUD]`.
 4. **Split at dilatation joints;** each side is its own slab.
 5. **Top = SFL** of that zone; level offset = SFL − level elevation. Sunk pieces: their own offset (RSUD −100).
 6. **True arcs:** if the outline has curve segments, model them as arcs (detection: `drawing-interpretation.md` §5 "Curved outlines"). Before saying "no curves", look at the raw outline objects in the area the user means.
 7. **Supports:** every edge sits on a beam or wall, or is a drawn cantilever edge / void edge / joint face (building-logic §2).
+8. **Dak = any slab area not covered by the level above** `[VERIFIED RSUD]`. Where ARS shows a room and STR shows its columns but no roof slab: add the slab, typed dak, with the edge beams STR does draw. Beams STR does not draw are left out (user rule, RSUD); the slab gets `MISSING SUPPORT … RFI` in Comments listing the beams it needs. Then re-type the slabs now covered by the new roof from dak to normal slab (only exposed slabs get waterproofing).
+
 
 ### B2b. Clean the outlines before building (on the vector file, not in Revit)
 Order: **generate → corner/cap clean → snap edges to edge beams → corner/cap clean again → pre-build audit → build.** Keep every step an idempotent script on the vector file, so regenerating does not wipe fixes `[VERIFIED RSUD]`.
@@ -171,6 +173,17 @@ return f.Id.ToString();
 4. **"Fix them all" means the whole model:** treat the user's selection as one example of a class, scan every level for that class, and report how many were found and fixed.
 5. Mechanical artifacts (corners, slivers, offsets): just fix them. Drawing questions (phantom or misplaced beams): list what each selected element should be per the sheet, then let the user decide.
 
+### B5c. Continuous shafts through several floors (merging per-level voids) `[VERIFIED RSUD]`
+RSUD had voids modelled level by level: 59 shaft openings plus 184 sketch holes, 51 of them duplicates. The user wanted one continuous shaft per vertical void. Method that worked:
+1. **Export every void** with one Revit script (`File.WriteAllText` to the project folder works): source (shaft `Opening` in Shaft Openings with `BoundaryCurves`, or a slab sketch inner loop from `Sketch.Profile`, every loop except the outer one, which has the largest bbox area), level elevation, tessellated outline in plan mm.
+2. **Analyse in Python** (bounding boxes if shapely is missing): pair each shaft with the sketch hole on the same level when they overlap > 50 %; cluster level by level with IoU ≥ 0.75 to the void on the next level down; within a cluster keep the longest contiguous run where every level is within a tolerance of the run's median bbox.
+3. **Ask the user for the tolerance, with numbers:** the same void differed 30–520 mm between levels (each level traced from its own plan). RSUD options: ≤ 100, ≤ 250 (recommended), ≤ 520 mm, each with its shaft count and how far edges move; the user chose 250.
+4. **One shaft per run:** `document.Create.NewOpening(bottomLevel, topLevel, curveArray)` with the median rectangle; base = lowest void level with `WALL_BASE_OFFSET` −280 (−400 at the slab on grade); top = highest void level, `WALL_TOP_OFFSET` 0. Then delete the per-level shafts of that run.
+5. **Verify three ways:** (a) beams are not cut: framing volumes (`HOST_VOLUME_COMPUTED`) before and after one test shaft; shafts did not cut structural framing; test before the batch. (b) Only voided slabs are cut: for slabs whose bbox overlaps the shaft, test points (centre and four corners 150 mm in) against the slab **sketch** loops (even-odd rule), not its geometry; `ElementIntersectsSolidFilter` is circular here (a slab already cut never intersects the shaft). (c) **A hole in one slab does not mean the level is open:** at one RSUD level the hole was filled by a separate atrium roof slab, so the shaft had to start one level higher. Check every slab at that level.
+6. **Record:** shafts have no Mark or Comments, so keep a table in the project log: mark, element id, levels, x/y range, per-level shafts replaced, maximum deviation, `LOW CONFIDENCE` when over 100 mm.
+- **Split runs are expected:** a void drawn 500 mm off on one level splits the stack (RSUD west stair: Lantai 2–4 and Lantai 6–Rooftop). Do not force it beyond the agreed tolerance; list the split levels for the user.
+- **Sketch holes cannot be removed by script:** the MCP always has a transaction open (`document.IsModifiable == true`), so `SketchEditScope` cannot start `[LIMIT]`. The only route is rebuilding the slab (`Floor.Create` with the remaining loops, copy type, level, offset, Mark, Comments, re-join every beam; RSUD slabs had 18–308 joins each); the user declined it as too invasive. With sketch holes kept, merge only stacks that already have shaft openings: a shaft over sketch-hole-only voids adds elements without removing any.
+
 ### B6. Verification — the slab audit (what "done" means for a level)
 Run all after every change, on every level; report the numbers. Done at zero, or a short list the user accepts `[VERIFIED RSUD]` (checks); thresholds `[EXPERIMENTAL RSUD]`.
 
@@ -200,6 +213,9 @@ Scripts (RSUD-specific): `prot.py` (#7), `side.py` (#8), `freeend.py` (#9), `enc
 | Cantilevers end in empty space / panel without slab | Edge beam never modelled; or panel cut by exclusion rectangles | Add the edge beam then the slab; extent = outline polygon | [VERIFIED RSUD] |
 | Fix proposed to delete a long strip of slab | Cap rule too loose (one depth ≤ 700) | Both depths short (B2b guards) | [VERIFIED RSUD] |
 | Modal "circular chain of references" | Hosted floor openings | Shaft openings | [VERIFIED RSUD] |
+| Same void modelled on every level, plus sketch holes | Voids drawn per level | One shaft per vertical run from the start; merge later with B5c | [VERIFIED RSUD] |
+| Shaft starts a level too low | A hole in the main slab was filled by another slab at that level | Test every slab at the level (B5c step 5c) | [VERIFIED RSUD] |
+| Covered slab still typed dak | Roof added above later | Re-type covered slabs to normal (B2a.8) | [VERIFIED RSUD] |
 | "Insufficient memory", whole call rolled back | Several levels rebuilt in one call | One level per call | [VERIFIED RSUD] |
 | Round corners modelled as many short lines | Curves not detected (classed as kerbs) | Detect Bézier segments; arcs in the loop | [VERIFIED RSUD] |
 | Dak wrong on the level below after an edit | Cover not recomputed | Re-run the cover calculation for lower levels | [VERIFIED RSUD] |

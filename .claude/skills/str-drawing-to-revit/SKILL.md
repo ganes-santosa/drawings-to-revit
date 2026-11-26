@@ -44,7 +44,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 | `beams` (`beam`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/beams.md` | |
 | `slabs` (`slab`, `floors`, `floor`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/slabs.md` | |
 | `foundations` (`foundation`, `footings`, `footing`, `piles`, `pilecaps`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/foundations.md` | Isolated, strip, raft, pile caps, piles |
-| `roof` (`framing`, `steel`, `trusses`, `truss`, `bracing`, `purlins`, `canopy`, `atap`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/roof-framing.md` | Steel roof: trusses, arches, roof frames, canopies, purlins, rods (beams.md covers plain beams) |
+| `roof` (`framing`, `steel`, `trusses`, `truss`, `bracing`, `purlins`, `canopy`, `atap`) | `workflows/element-modeling-workflow.md`, `references/building-logic.md`, `references/roof-framing.md` | Steel roof: trusses, arches, roof frames, canopies, purlins, rods. Default: Revit Structural Trusses, method asked at setup (beams.md covers plain beams) |
 | `families` (`family`, `types`) | `references/revit-families.md` | Family/type selection and creation |
 | `api` (`automation`, `mcp`, `probe`) | `references/revit-api-and-automation.md` | Tool probing, API patterns, script limits |
 | `review` (`qc`, `validate`, `check`, `audit`) | `workflows/quality-control-workflow.md`, `references/model-validation.md`, `references/building-logic.md` | Compare model to drawings; report |
@@ -73,6 +73,7 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 9. **Ask when critical info is missing** and cannot be bounded safely. Offer 2–3 options with a recommendation. Explain any destructive or bulk change *before* running it, and never delete user-made elements without asking.
 10. **Never assume an API, family, parameter, or tool exists.** Probe first (`references/revit-api-and-automation.md`).
 11. **Nothing floats.** Every member must sit on or frame into a support, down to the foundation: beams into columns, walls or other beams; columns onto foundations or the column below; slabs onto beams or walls; roof members onto columns or beams. Plan the supports before placing, resolve beam end points from the supports (not from where the drawn line stops), and run the connectivity check after every batch. A free end is only allowed for a drawn cantilever. `references/building-logic.md`.
+12. **The drawings decide, not the habit.** The references are a guide built from past projects, not a recipe to follow blindly. Their rules and conventions (step levels, base levels, lift pits, purlin orientation, segmentation, tolerances) are **defaults for when this project's drawings are silent**. When the drawings show something else, follow the drawings, even if it looks unusual. When the project needs no default (nothing drawn), do not apply one: log a question with sheet and page. Each default used is logged as `ASSUMED` with its source rule. A user rule from one project (RSUD: hidden group for columns carrying nothing, STR governs over ARS, `MISSING SUPPORT` tags) is asked again on a new project, not assumed.
 
 ## 4. General Revit modelling principles
 
@@ -99,6 +100,8 @@ Every route loads this file plus the files listed. `⊕` = always also load `ref
 - No AI name ("CLAUDE") in view, element or type names. Use project-style names from the start.
 - **Ask the project modelling decisions once at setup** (`references/project-setup.md` §3 step 5b): beam segmentation (continuous / split at supports / continuous within zones; recommend split at supports when 4D phasing is possible or unknown, since merging later is easy and splitting later is not). Record in the project log; elements follow it.
 - **Fix the class, not the instance.** The user selects a few examples; treat them as a class, scan every level for it, report how many were found and fixed (RSUD slabs took five rounds because only selections were fixed). Mechanical artifacts: just fix them. Drawing questions: list what the sheet says, let the user decide.
+- **Point to the document and page** for every open question ("S-11 p25 vs S-34 p48"): the user asked for it explicitly (RSUD).
+- **Act by element, not by type,** unless the user says type (tagging "all S5" hit 33 beams for 1 meant); move beam ends by element id and end index. **Confirm a bounding-box finding** with the outline or a point test before telling the user.
 - End every task with a short report: the outcome plus one next step.
 
 ## 5. Ambiguity and conflict handling
@@ -133,7 +136,7 @@ This skill grows only from **tested results**. After any modelling operation tha
 | Tag | Meaning |
 |---|---|
 | `[VERIFIED <source, Revit ver>]` | Executed in THIS setup (local Revit + MCP) and the resulting model inspected. |
-| `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]` | Run in Revit 2026 + `mcp-server-for-revit` on the RSUD Cakung model (2026-11-20..23) and checked by audit script or the user's screenshots (`EXPERIMENTAL` = counts right, 3D not yet inspected). Field reports: `assets/field-reports/` (beams 2026-11-23, slabs 2026-11-24). |
+| `[VERIFIED RSUD]` / `[EXPERIMENTAL RSUD]` | Run in Revit 2026 + `mcp-server-for-revit` on the RSUD Cakung model (2026-11-20..23) and checked by audit script or the user's screenshots (`EXPERIMENTAL` = counts right, 3D not yet inspected). Field reports: `assets/field-reports/` (beams 2026-11-23, slabs 2026-11-24, roofs/supports/voids 2026-11-25). |
 | `[IMPORTED <source>]` | Taken from an earlier real project (e.g. KPwBI) but NOT re-run here. Use as a hypothesis: test on one element, then promote to `[VERIFIED]`. |
 | `[EXPERIMENTAL]` | Worked once or under narrow conditions; not yet repeated. Use with a check. |
 | `[THEORY]` | Standard knowledge or API documentation; **not tested in this setup**. Verify before relying on it. |

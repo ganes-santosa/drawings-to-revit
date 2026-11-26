@@ -30,7 +30,8 @@ Never leave it silently. Decide which of the three it is, fix or flag it, and lo
 | Pile cap / footing | piles / ground, with a column or wall on top | none: a cap with nothing on it is an orphan (ask) |
 | Rafter / truss | column, wall, ring beam or roof beam at both supports | drawn overhang (eave) |
 | Truss web / post | a panel point on a chord (both ends, in 3D) | none |
-| Stub column (roof) | a concrete beam, column or slab edge below; truss heel on top | none |
+| Stub column / steel roof post | a modelled concrete beam or column top below (base level incl. plate + grout from the base detail); top at the rafter centreline or truss heel `[VERIFIED RSUD]` | none |
+| Roof edge / rafter end | a post, column or beam under it `[VERIFIED RSUD]` | drawn eave overhang |
 | Purlin | rafters / trusses at every crossing (sitting on top) | end overhang past the last rafter, if drawn |
 | Brace | members at both ends | none |
 
@@ -90,6 +91,8 @@ Script: `scripts/revit/check_connectivity.cs` implements the definition (read-on
 - **Column bases** with no foundation, column, beam or wall just below.
 
 Column stacks, free column tops and duplicates: `scripts/revit/audit_columns.cs`, `scripts/revit/find_duplicates.cs`.
+
+**Roof checks** (`roof-framing.md` B6) `[VERIFIED RSUD]`: no concrete column passes through a roof member; every roof edge has a support; every column top carries something (columns that carry nothing: `columns.md` B3b.6).
 
 Every floating member in the report must end up as: fixed, a documented drawn cantilever, or an open question for the user. Target: 0 unexplained.
 

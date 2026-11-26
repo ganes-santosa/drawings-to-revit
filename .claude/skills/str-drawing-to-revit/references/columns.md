@@ -77,6 +77,8 @@ Column layout plan per level (marks at grid intersections; dimensioned offsets f
 3. **Base:** top of the cap/footing from the foundation section. If no foundation level is drawn: base = soffit of the deepest beam framing in at the lowest floor, `LOW CONFIDENCE`, and the cap top is set to the column base `[IMPORTED KPwBI]` (convention: confirm with the user).
 4. **Top:** the top of the slab/beam at the top of the stack (column must reach the beam soffit at least: building-logic §4.3).
 5. **Orientation:** from the schedule sketch. If undrawn, assume b along X and log it `[IMPORTED KPwBI]`.
+6. **Under a steel roof, the roof sections govern:** check the column plan of that storey against the roof sections and connection details. Steel posts or stubs on a beam in the sections → the concrete column stops at the beam below and the steel post carries on (`roof-framing.md` B3.13) `[VERIFIED RSUD]`.
+7. **A column on a plan but missing from the schedule** is still a column: take the type from the matching column on a parallel grid line, `LOW CONFIDENCE`, and list it (RSUD KT1) `[VERIFIED RSUD]`.
 
 ### B3b. Clean the table before placing `[THEORY]`
 Same idea as `beams.md` B2b, in this order:
@@ -86,6 +88,7 @@ Same idea as `beams.md` B2b, in this order:
 4. **Plan alignment of stacks:** an upper column sits on the same centre as the one below unless an offset is drawn. Undrawn shifts > 20 mm → check the sheets, keep the drawn position, list it.
 5. **Base support:** every bottom stack has a cap/footing/wall/beam below (support table). A column on a beam (transfer) is listed for the user.
 6. **Top:** reaches the beam soffit or slab top above (building-logic §4.3). A column with nothing on top (roof posts, canopy) is a drawn free top, noted in Comments.
+   **Columns that carry nothing** (RSUD: 30+ on the STR column plans) `[VERIFIED RSUD]`: cross-check each with the architectural plans, sections and elevations. Either a roof or room exists that STR forgot (model its roof: `slabs.md` B2a.8), or it is a drafting leftover. User rule (RSUD): keep it, tag it, and put it in a hidden model group `KOLOM TERGAMBAR TANPA BEBAN` (hidden in every view), excluded from quantities unless confirmed. Never delete a drawn element outright.
 7. **Gate:** 0 duplicate positions, 0 stack gaps, every base support filled, every type in the catalog.
 
 ### B4–B5. Revit procedure
@@ -129,6 +132,8 @@ After each level, run read-only: `scripts/revit/find_duplicates.cs` (placed twic
 | Column too short for the beam | Top set to level, beam deeper / higher | Top = slab/beam top; height chain; connectivity reports `column top below beam soffit` | [THEORY] |
 | Two columns in one place | Batch re-run after a timeout, or the same column from two sheets | Skip existing Marks; de-duplicate the table (B3b.1); `find_duplicates.cs` | [THEORY] |
 | Gap or step between storeys | Stack base not set to the top below | Stack rule (B3b.3); `audit_columns.cs` | [THEORY] |
+| Concrete column rises through a steel roof | Column plan followed, roof sections ignored | B3.6: stop at the beam, steel post above | [VERIFIED RSUD] |
+| Column with nothing on top | Drafting leftover or a roof STR forgot | Cross-check ARS; model the roof or move to the hidden group (B3b.6) | [VERIFIED RSUD] |
 
 ## Related
 `building-logic.md`, `foundations.md`, `beams.md`, `revit-families.md`, `model-validation.md`.

@@ -19,6 +19,8 @@ Type/mark, plan size and position, top and bottom levels (often missing), pile t
 - Missing cap top: set to column base / beam soffit rule, flag `LOW CONFIDENCE`; confirm (columns.md §4.3).
 - Existing vs demolished vs new per element; ask when a cap is "attached to nothing" `[IMPORTED KPwBI]` (4 caps of a demolished canopy).
 
+**Lift pits: follow the drawings.** Often the pile caps under a lift pit sit at the pit underside, with the piles lowered and the columns extended down (RSUD: −1900; there the user applied it as building logic) `[VERIFIED RSUD]`. But **if the drawings do not show it, do not model it that way**: use the drawn cap level and, if the pit seems to clash with it, log a question with sheet and page instead of moving anything (user rule, 2026-11-25).
+
 ## 5. Revit procedure
 1. **Company convention: DirectShape in category Structural Foundations** `[IMPORTED KPwBI]`. Native option (Isolated/Wall Foundation, Foundation Slab families, `NewFamilyInstance` with `StructuralType.Footing`) `[THEORY]` — prefer native families where the project provides them; ask.
 2. Two groups per foundation: `PONDASI <type> <grid> - PILE CAP` and `... - TIANG BOR`; marks `PC-<type>-<grid>`, `TB-<type>-x/y` `[IMPORTED KPwBI]`.
