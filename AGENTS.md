@@ -2,7 +2,7 @@
 
 ## What this repo is
 This repo develops **two Claude skills** that turn construction drawings into an accurate Autodesk Revit 2026 model through the Revit MCP server:
-- **`str-drawing-to-revit`** (`.claude/skills/str-drawing-to-revit/`): structural drawings → structural model.
+- **`str-to-revit`** (`.claude/skills/str-to-revit/`): structural drawings → structural model.
 - **`ars-to-revit`** (`.claude/skills/ars-to-revit/`): architectural drawings → architectural model. Moved in from the `ars-to-revit` repo on 2026-11-25 (commit 6dc17fe there).
 
 They stay two skills (clear triggers, small rule sets) but share scripts and templates through `shared/`. The user is not a programmer: explain in plain language, keep answers short, ask when a decision is theirs.
@@ -34,7 +34,7 @@ Read `HANDOFF.md` first (where we left off), then the `SKILL.md` of the skill yo
 
 ## Project decisions
 - **One project log per project, shared by both skills:** `<drawing set folder>\_log\project-log.md` (samples: `samples\<project>\_log\`). Setup (units, levels, grids, coordinates) is done once; the second skill reuses it.
-- STR: beam segmentation (and slab/column segmentation, roof scope) is chosen per project at setup and recorded in the log; never assume (`str-drawing-to-revit/references/project-setup.md` §3 step 5b).
+- STR: beam segmentation (and slab/column segmentation, roof scope) is chosen per project at setup and recorded in the log; never assume (`str-to-revit/references/project-setup.md` §3 step 5b).
 - ARS: exterior-first and finish modelling choices are per project (ask when the first task needs them).
 
 ## Environment (checked 2026-11-20 / 2026-11-24)
@@ -45,7 +45,7 @@ Read `HANDOFF.md` first (where we left off), then the `SKILL.md` of the skill yo
 
 ## Layout
 ```
-.claude/skills/str-drawing-to-revit/   structural skill (SKILL.md, DEVLOG.md, references/, workflows/, scripts/, assets/)
+.claude/skills/str-to-revit/   structural skill (SKILL.md, DEVLOG.md, references/, workflows/, scripts/, assets/)
 .claude/skills/ars-to-revit/           architectural skill (same layout)
   assets/legacy/ (in each skill)       verbatim copies of the original KPwBI skills: evidence trail
 shared/                                originals of the shared scripts and templates (edit here)

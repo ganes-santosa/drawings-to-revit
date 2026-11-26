@@ -11,7 +11,8 @@ Last updated: 2026-11-25 (ARS: KPwBI catalogs, core door/window families) · Rep
 
 ---
 
-## STR skill (`str-drawing-to-revit`)
+## STR skill (`str-to-revit`)
+- Renamed from `str-drawing-to-revit` on 2026-11-26 to match `ars-to-revit`. Invoke as `/str-to-revit`.
 
 ### What exists
 - v1.1.0 + unreleased work: orchestrator `SKILL.md`, 15 reference files, 4 workflows, scripts, templates. Details: its `DEVLOG.md`.

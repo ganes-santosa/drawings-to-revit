@@ -1,5 +1,5 @@
 ---
-name: str-drawing-to-revit
+name: str-to-revit
 description: Interpret structural engineering drawings (PDF/CAD plans, sections, details, schedules) and build an accurate, traceable, verified Autodesk Revit structural model. Use for modelling or checking columns, beams, slabs, foundations, walls, stairs, framing, reinforcement or connections from drawings, and for reviewing or troubleshooting such a model.
 metadata:
   version: 1.1.0

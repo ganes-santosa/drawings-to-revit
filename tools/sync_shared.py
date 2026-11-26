@@ -13,7 +13,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 SHARED = REPO / "shared"
-SKILLS = [REPO / ".claude/skills/str-drawing-to-revit", REPO / ".claude/skills/ars-to-revit"]
+SKILLS = [REPO / ".claude/skills/str-to-revit", REPO / ".claude/skills/ars-to-revit"]
 NOTE = "SHARED COPY - do not edit here. Edit shared/{p} in the repo, then run tools/sync_shared.py"
 
 

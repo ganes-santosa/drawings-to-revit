@@ -2,6 +2,9 @@
 
 Newest first. Record: structure changes, verified workflows, unresolved issues, lessons. Tested results themselves go to `references/` (+ `lessons-learned.md`).
 
+## 2026-11-26 — skill renamed `str-drawing-to-revit` → `str-to-revit` (unreleased)
+- Same naming as `ars-to-revit` (user request). Folder, SKILL.md name, AGENTS/README/HANDOFF, `tools/sync_shared.py`, shared project log template. Older DEVLOG lines and the archived legacy files keep the old name.
+
 ## 2026-11-25 — roof frames as Revit Structural Trusses by default (unreleased)
 - User rule: the roof structure method is asked at setup, recommended **Revit Structural Trusses** (alternative: separate framing members, the RSUD method). `roof-framing.md` new §2a (method, frames without webs are asked), A4b truss types (catalog per layout and profile set, inventory `OST_Truss`, no types → ask "make them first" (recommended) or "user loads", family from `Metric Structural Trusses.rft`, types set chord/web framing types, gate), B4a truss placement (`Truss.Create`, pilot against panel points, `SetProfile`, per-member overrides, marks, `DropTruss` fallback); old B4–B5 is now B4b (framing method + purlins, rods, bracing in both). `audit_roof.cs` includes truss members; setup step 5b, workflow A4, project log template, model-validation #21, SKILL routing row. All truss procedures `[THEORY]` until piloted.
 - Frames without webs (portal rafters, solid arches, canopy beams): Structural Framing + Structural Columns, haunches as steel connections or not modelled, with the reasons from web research (user: "go with that for now", may change after a real project). B4b: set Structural Usage by role (Girder / Purlin / Horizontal Bracing / Kicker Bracing / Other) `[THEORY]`.

@@ -127,7 +127,7 @@ The skill grows only from **tested results**:
 |---|---|
 | `[VERIFIED <source, date>]` | Run in THIS setup (local Revit + MCP, or the script on the real drawings) and the result inspected. |
 | `[IMPORTED KPwBI-ARS]` | From the KPwBI DIY architectural model (Revit 2026, Nov 2026; `assets/legacy/`), not re-run here. Treat as a strong hypothesis: test on one element, then promote. |
-| `[IMPORTED STR]` | From the sister skill `str-drawing-to-revit` (KPwBI structure / RSUD Cakung), not re-run on an architectural model. |
+| `[IMPORTED STR]` | From the sister skill `str-to-revit` (KPwBI structure / RSUD Cakung), not re-run on an architectural model. |
 | `[EXPERIMENTAL]` | Worked once or under narrow conditions. |
 | `[THEORY]` | Standard knowledge or API docs; **not tested here**. |
 | `[LIMIT]` | Known limitation of a tool, API or family. |

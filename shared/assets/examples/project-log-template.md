@@ -12,7 +12,7 @@ One log per project, shared by the structural (str) and architectural (ars) skil
 - Conventions: Mark patterns · type names · material names (spec codes) · Comments format
 - Family folder · log folder (if not next to the drawings)
 
-## Structure (str-drawing-to-revit)
+## Structure (str-to-revit)
 - **Modelling decisions (asked once at setup):** beam segmentation A continuous / B split at supports / C continuous within zones (+ zone lines) · slab segmentation · column stacks · roof structure method (Revit Structural Trusses / Structural Framing members) · roof scope (purlins / rods / light-gauge) · date and who decided
 - Type catalogs: columns, beams, slabs, foundations, roof (`type-catalog-template.csv`), final versions
 - Coordinates of non-obvious elements (off-grid, eccentric, joint strips)
